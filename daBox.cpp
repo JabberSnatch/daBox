@@ -11,22 +11,20 @@ const unsigned int SCREEN_HEIGHT = 480;
 const unsigned int SCREEN_FPS = 60;
 const unsigned int SCREEN_TPF = 1000 / SCREEN_FPS; // TPF = Ticks Per Frame
 
-const double MAX_SPEED = 2.0f;
-const double ACC_FACTOR = 0.3f;
+const double MAX_SPEED = 3.7f;
+const double ACC_FACTOR = 0.7f;
+const double FRICTION = 0.1f;
+
+const double PRECISION = 0.01f;
 
 using namespace std;
 
-/*
-// TODO (Samu#2#): Acceleration FX - Weeeee!                        \ \ \ \ \
-// TODO (Samu#2#): Inertia FX - Lat's add some curves to this box   / / / / /
-// TODO (Samu#3#): Add some missiles and ennemies
-*/
+// TODO (Samu#1#): Add some missiles and ennemies
 
 struct BoxLogic {
     SDL_Texture * sprite;
 
     int directions [4];
-    //int prevDirections [4];
     int orientation;
 
     double xPosition, yPosition;
@@ -76,7 +74,6 @@ int main(int argc, char **argv) {
 // BoxLogic fields initialisation
     for (int i = 0; i < 4; i++){
         daBox.directions[i] = 0;
-        //daBox.prevDirections[i] = 0;
     }
     daBox.orientation = 0;
     daBox.xVelocity = daBox.yVelocity = 0;
@@ -175,50 +172,65 @@ int main(int argc, char **argv) {
 /// UPDATE
         while(lag >= SCREEN_TPF) {
 
+        // Update the sprite according to the orientation
             daBox.inRect.y = daBox.orientation * 16;
 
-            // TODO (Samu#1#): This is better. velocity should be reset to 0 if no keys are pressed or if the direction is reversed.
+        // Add the acceleration to the velocity
             daBox.xVelocity += (daBox.directions[1] - daBox.directions[3]) * ACC_FACTOR;
             daBox.yVelocity += (daBox.directions[2] - daBox.directions[0]) * ACC_FACTOR;
 
-            if (daBox.xVelocity > MAX_SPEED) daBox.xVelocity = MAX_SPEED;
-            if (daBox.xVelocity < (MAX_SPEED * -1.0f)) daBox.xVelocity = MAX_SPEED * -1.0f;
-            if (daBox.yVelocity > MAX_SPEED) daBox.yVelocity = MAX_SPEED;
-            if (daBox.yVelocity < (MAX_SPEED * -1.0f)) daBox.yVelocity = MAX_SPEED * -1.0f;
+        // A portion of velocity is lost in friction
+            daBox.xVelocity *= (1-FRICTION);
+            daBox.yVelocity *= (1-FRICTION);
 
+        // Check for overflows
+            // Outer bounds
+            if (daBox.xVelocity > MAX_SPEED) daBox.xVelocity = MAX_SPEED;
+            if (daBox.xVelocity < -MAX_SPEED) daBox.xVelocity = -MAX_SPEED;
+            if (daBox.yVelocity > MAX_SPEED) daBox.yVelocity = MAX_SPEED;
+            if (daBox.yVelocity < -MAX_SPEED) daBox.yVelocity = -MAX_SPEED;
+
+            // Inner bounds, so that it doesn't keep endlessly precise floats
+            if ((daBox.xVelocity > 0 && daBox.xVelocity < PRECISION) ||
+                (daBox.xVelocity < 0 && daBox.xVelocity > -PRECISION))
+                {daBox.xVelocity = 0;}
+            if ((daBox.yVelocity > 0 && daBox.yVelocity < PRECISION) ||
+                (daBox.yVelocity < 0 && daBox.yVelocity > -PRECISION))
+                {daBox.yVelocity = 0;}
+
+        // At last apply the velocity vector to the position
             daBox.xPosition += daBox.xVelocity;
             daBox.yPosition += daBox.yVelocity;
 
-            daBox.outRect.x = (int) floor(daBox.xPosition + 0.5f);
-            daBox.outRect.y = (int) floor(daBox.yPosition + 0.5f);
-
-
-            if (daBox.outRect.y < 0) {
-                daBox.outRect.y = 0;
-                daBox.yPosition = 0;
-                daBox.yVelocity = 0;
-            }
-            if (daBox.outRect.y > 480-16) {
-                daBox.outRect.y = 480-16;
-                daBox.yPosition = 480-16;
-                daBox.yVelocity = 0;
-            }
-            if (daBox.outRect.x < 0) {
-                daBox.outRect.x = 0;
+        // Boundary check time !
+            if (daBox.xPosition < 0) {
                 daBox.xPosition = 0;
                 daBox.xVelocity = 0;
             }
-            if (daBox.outRect.x > 640-16) {
-                daBox.outRect.x = 640-16;
-                daBox.xPosition = 640-16;
+            if (daBox.xPosition > SCREEN_WIDTH-16) {
+                daBox.xPosition = SCREEN_WIDTH-16;
                 daBox.xVelocity = 0;
             }
+            if (daBox.yPosition < 0) {
+                daBox.yPosition = 0;
+                daBox.yVelocity = 0;
+            }
+            if (daBox.yPosition > SCREEN_HEIGHT-16) {
+                daBox.yPosition = SCREEN_HEIGHT-16;
+                daBox.yVelocity = 0;
+            }
 
+        // Convert the precise position into pixels position
+            daBox.outRect.x = (int) floor(daBox.xPosition + 0.5f);
+            daBox.outRect.y = (int) floor(daBox.yPosition + 0.5f);
+
+        // ..Aaaaand update the lag counter
             lag -= SCREEN_TPF;
         }
 
 /// RENDER
 
+        //cout << daBox.xVelocity << "; " << daBox.yVelocity << endl;
         SDL_RenderClear(renderer);
         SDL_RenderCopy(renderer, daBox.sprite, &daBox.inRect, &daBox.outRect);
         SDL_UpdateWindowSurface(window);
