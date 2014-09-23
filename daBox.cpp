@@ -90,7 +90,7 @@ int main(int argc, char **argv) {
 
     bool running = true;
     SDL_Event e;
-    unsigned int lastTime = SDL_GetTicks(), currentTime, lag, elapsed; // FPS capping variables
+    unsigned int lastTime = SDL_GetTicks(), currentTime, lag(0), elapsed; // FPS capping variables
 
     while (running) {
 
