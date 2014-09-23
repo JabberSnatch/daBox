@@ -1,5 +1,6 @@
 #include <iostream>
 #include <stdio.h>
+#include <math.h>
 
 #include "SDL.h"
 
@@ -179,18 +180,29 @@ int main(int argc, char **argv) {
             daBox.outRect.y += (int) floor(daBox.yVelocity + 0.5f);
 
 
-            if (daBox.outRect.y < 0) daBox.outRect.y = 0;
-            if (daBox.outRect.y > 480-16) daBox.outRect.y = 480-16;
-            if (daBox.outRect.x < 0) daBox.outRect.x = 0;
-            if (daBox.outRect.x > 640-16) daBox.outRect.x = 640-16;
-
+            if (daBox.outRect.y < 0) {
+                daBox.outRect.y = 0;
+                daBox.yVelocity = 0;
+            }
+            if (daBox.outRect.y > 480-16) {
+                daBox.outRect.y = 480-16;
+                daBox.yVelocity = 0;
+            }
+            if (daBox.outRect.x < 0) {
+                daBox.outRect.x = 0;
+                daBox.xVelocity = 0;
+            }
+            if (daBox.outRect.x > 640-16) {
+                daBox.outRect.x = 640-16;
+                daBox.xVelocity = 0;
+            }
 
             lag -= SCREEN_TPF;
         }
 
 /// RENDER
 
-        //SDL_RenderClear(renderer);
+        SDL_RenderClear(renderer);
         SDL_RenderCopy(renderer, daBox.sprite, &daBox.inRect, &daBox.outRect);
         SDL_UpdateWindowSurface(window);
 
