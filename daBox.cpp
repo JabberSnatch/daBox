@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdio.h>
 
 #include "SDL.h"
 
@@ -13,15 +14,19 @@ const unsigned int BOX_SPEED = 2;
 
 using namespace std;
 
+/*
 // TODO (Samu#2#): Acceleration FX - Weeeee!                        \ \ \ \ \
 // TODO (Samu#2#): Inertia FX - Lat's add some curves to this box   / / / / /
 // TODO (Samu#3#): Add some missiles and ennemies
+*/
 
 struct BoxLogic {
     SDL_Texture * sprite;
 
     int directions [4];
+    int prevDirections [4];
     int orientation;
+    double xVelocity, yVelocity;
 
     SDL_Rect outRect;
     SDL_Rect inRect;
@@ -65,8 +70,12 @@ int main(int argc, char **argv) {
     SDL_FreeSurface(tmp);
 
 // BoxLogic fields initialisation
-    daBox.directions[0]=0; daBox.directions[1]=0; daBox.directions[2]=0; daBox.directions[3]=0;
+    for (int i = 0; i < 4; i++){
+        daBox.directions[i] = 0;
+        daBox.prevDirections[i] = 0;
+    }
     daBox.orientation = 0;
+    daBox.xVelocity = daBox.yVelocity = 0;
 
     daBox.outRect.h = daBox.outRect.w = daBox.inRect.h = daBox.inRect.w = 16;
     daBox.outRect.x = (SCREEN_WIDTH-daBox.outRect.h)/2;
@@ -160,21 +169,15 @@ int main(int argc, char **argv) {
 /// UPDATE
         while(lag >= SCREEN_TPF) {
 
-            /*int simultaneousDir = 0;
-            int tmpDir = 0;
-            for (int i = 0; i < 4; i++){
-                simultaneousDir += daBox.directions[i];
-                if (daBox.directions[i] == 1)
-                    tmpDir = i;
-            }
-            if (simultaneousDir == 1)
-                daBox.orientation = tmpDir;*/
-
             daBox.inRect.y = daBox.orientation * 16;
 
+            // TODO (Samu#1#): This is better. velocity should be reset to 0 if no keys are pressed or if the direction is reversed.
+            daBox.xVelocity += (daBox.directions[1] - daBox.directions[3]) * 0.1f;
+            daBox.yVelocity += (daBox.directions[2] - daBox.directions[0]) * 0.1f;
 
-            daBox.outRect.y += (daBox.directions[2] - daBox.directions[0])*BOX_SPEED;
-            daBox.outRect.x += (daBox.directions[1] - daBox.directions[3])*BOX_SPEED;
+            daBox.outRect.x += (int) floor(daBox.xVelocity + 0.5f);
+            daBox.outRect.y += (int) floor(daBox.yVelocity + 0.5f);
+
 
             if (daBox.outRect.y < 0) daBox.outRect.y = 0;
             if (daBox.outRect.y > 480-16) daBox.outRect.y = 480-16;
@@ -187,9 +190,11 @@ int main(int argc, char **argv) {
 
 /// RENDER
 
-        SDL_RenderClear(renderer);
+        //SDL_RenderClear(renderer);
         SDL_RenderCopy(renderer, daBox.sprite, &daBox.inRect, &daBox.outRect);
         SDL_UpdateWindowSurface(window);
+
+        //SDL_Delay(250);
     }
 
     //SDL_FreeSurface(daBox.sprite);
