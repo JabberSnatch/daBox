@@ -1,0 +1,20 @@
+# depslib dependency file v1.0
+1410437554 source:d:\users\samu\documents\codeblocks\dabox\dabox.cpp
+	"SDL.h"
+
+1411380647 source:/home/etudiant/Documents/SDL/daBox/daBox.cpp
+	<iostream>
+	"SDL.h"
+	<iostream>
+	"SDL.h"
+
+1411229654 
+
+1411407536 source:i:\programmation\sdl\dabox\dabox.cpp
+	<iostream>
+	"SDL.h"
+
+1411314378 source:/media/OSWALD/Programmation/SDL/daBox/daBox.cpp
+	<iostream>
+	"SDL.h"
+
