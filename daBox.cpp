@@ -11,7 +11,8 @@ const unsigned int SCREEN_HEIGHT = 480;
 const unsigned int SCREEN_FPS = 60;
 const unsigned int SCREEN_TPF = 1000 / SCREEN_FPS; // TPF = Ticks Per Frame
 
-const unsigned int BOX_SPEED = 2;
+const double MAX_SPEED = 2.0f;
+const double ACC_FACTOR = 0.3f;
 
 using namespace std;
 
@@ -25,8 +26,10 @@ struct BoxLogic {
     SDL_Texture * sprite;
 
     int directions [4];
-    int prevDirections [4];
+    //int prevDirections [4];
     int orientation;
+
+    double xPosition, yPosition;
     double xVelocity, yVelocity;
 
     SDL_Rect outRect;
@@ -73,14 +76,16 @@ int main(int argc, char **argv) {
 // BoxLogic fields initialisation
     for (int i = 0; i < 4; i++){
         daBox.directions[i] = 0;
-        daBox.prevDirections[i] = 0;
+        //daBox.prevDirections[i] = 0;
     }
     daBox.orientation = 0;
     daBox.xVelocity = daBox.yVelocity = 0;
 
     daBox.outRect.h = daBox.outRect.w = daBox.inRect.h = daBox.inRect.w = 16;
-    daBox.outRect.x = (SCREEN_WIDTH-daBox.outRect.h)/2;
-    daBox.outRect.y = (SCREEN_HEIGHT-daBox.outRect.w)/2;
+    daBox.xPosition = (SCREEN_WIDTH-daBox.outRect.h)/2;
+    daBox.yPosition = (SCREEN_HEIGHT-daBox.outRect.w)/2;
+    daBox.outRect.x = (int) floor(daBox.xPosition + 0.5f);
+    daBox.outRect.y = (int) floor(daBox.yPosition + 0.5f);
     daBox.inRect.x = daBox.inRect.y = 0;
 
 
@@ -173,27 +178,39 @@ int main(int argc, char **argv) {
             daBox.inRect.y = daBox.orientation * 16;
 
             // TODO (Samu#1#): This is better. velocity should be reset to 0 if no keys are pressed or if the direction is reversed.
-            daBox.xVelocity += (daBox.directions[1] - daBox.directions[3]) * 0.1f;
-            daBox.yVelocity += (daBox.directions[2] - daBox.directions[0]) * 0.1f;
+            daBox.xVelocity += (daBox.directions[1] - daBox.directions[3]) * ACC_FACTOR;
+            daBox.yVelocity += (daBox.directions[2] - daBox.directions[0]) * ACC_FACTOR;
 
-            daBox.outRect.x += (int) floor(daBox.xVelocity + 0.5f);
-            daBox.outRect.y += (int) floor(daBox.yVelocity + 0.5f);
+            if (daBox.xVelocity > MAX_SPEED) daBox.xVelocity = MAX_SPEED;
+            if (daBox.xVelocity < (MAX_SPEED * -1.0f)) daBox.xVelocity = MAX_SPEED * -1.0f;
+            if (daBox.yVelocity > MAX_SPEED) daBox.yVelocity = MAX_SPEED;
+            if (daBox.yVelocity < (MAX_SPEED * -1.0f)) daBox.yVelocity = MAX_SPEED * -1.0f;
+
+            daBox.xPosition += daBox.xVelocity;
+            daBox.yPosition += daBox.yVelocity;
+
+            daBox.outRect.x = (int) floor(daBox.xPosition + 0.5f);
+            daBox.outRect.y = (int) floor(daBox.yPosition + 0.5f);
 
 
             if (daBox.outRect.y < 0) {
                 daBox.outRect.y = 0;
+                daBox.yPosition = 0;
                 daBox.yVelocity = 0;
             }
             if (daBox.outRect.y > 480-16) {
                 daBox.outRect.y = 480-16;
+                daBox.yPosition = 480-16;
                 daBox.yVelocity = 0;
             }
             if (daBox.outRect.x < 0) {
                 daBox.outRect.x = 0;
+                daBox.xPosition = 0;
                 daBox.xVelocity = 0;
             }
             if (daBox.outRect.x > 640-16) {
                 daBox.outRect.x = 640-16;
+                daBox.xPosition = 640-16;
                 daBox.xVelocity = 0;
             }
 
@@ -209,7 +226,6 @@ int main(int argc, char **argv) {
         //SDL_Delay(250);
     }
 
-    //SDL_FreeSurface(daBox.sprite);
     daBox.sprite = NULL;
     SDL_DestroyWindow(window);
     window = NULL;

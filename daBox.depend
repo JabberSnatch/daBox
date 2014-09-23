@@ -8,6 +8,8 @@
 	<iostream>
 	"SDL.h"
 
+1411314378 
+
 1411229654 
 
 1411407536 source:i:\programmation\sdl\dabox\dabox.cpp
@@ -16,5 +18,11 @@
 
 1411314378 source:/media/OSWALD/Programmation/SDL/daBox/daBox.cpp
 	<iostream>
+	"SDL.h"
+
+1411483119 source:/home/etudiant/Documents/SDL/daBox/daBox.cpp
+	<iostream>
+	<stdio.h>
+	<math.h>
 	"SDL.h"
 
