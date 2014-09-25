@@ -1,9 +1,12 @@
 #include <iostream>
 #include <stdio.h>
 #include <math.h>
+#include <vector>
 
 #include "SDL.h"
 
+// TODO (Samu#2#): This variable should be removed from here
+bool missileFired = false;
 
 const unsigned int SCREEN_WIDTH = 640;
 const unsigned int SCREEN_HEIGHT = 480;
@@ -13,7 +16,9 @@ const unsigned int SCREEN_TPF = 1000 / SCREEN_FPS; // TPF = Ticks Per Frame
 
 const double MAX_SPEED = 3.7f;
 const double ACC_FACTOR = 0.7f;
-const double FRICTION = 0.1f;
+const double FRICTION = 0.15f;
+
+const double MISSILE_SPEED = 6.0f;
 
 const double PRECISION = 0.01f;
 
@@ -33,6 +38,51 @@ struct BoxLogic {
     SDL_Rect outRect;
     SDL_Rect inRect;
 };
+
+struct MissileLogic {
+    SDL_Texture * sprite;
+
+    int orientation;
+
+    double xPosition, yPosition;
+    double xVelocity, yVelocity;
+
+    SDL_Rect outRect;
+    SDL_Rect inRect;
+};
+
+MissileLogic * makeMissile (SDL_Renderer * renderer, BoxLogic & launcher) {
+    MissileLogic * newMissile = new MissileLogic;
+
+    SDL_Surface * tmp = SDL_LoadBMP("assets/missile.bmp");
+    if (!tmp) {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Bitmap loading fail : %s\n", SDL_GetError());
+        return NULL;
+    }
+    SDL_SetColorKey(tmp, SDL_TRUE, SDL_MapRGB(tmp->format, 255, 0, 255));
+    newMissile->sprite = SDL_CreateTextureFromSurface(renderer, tmp);
+    SDL_FreeSurface(tmp);
+
+    newMissile->orientation = launcher.orientation;
+    newMissile->xPosition = launcher.xPosition; newMissile->yPosition = launcher.yPosition;
+    newMissile->xVelocity = ((newMissile->orientation == 1) - (newMissile->orientation == 3)) * MISSILE_SPEED;
+    newMissile->yVelocity = ((newMissile->orientation == 2) - (newMissile->orientation == 0)) * MISSILE_SPEED;
+
+    newMissile->outRect.w = newMissile->outRect.h = newMissile->inRect.w = newMissile->inRect.h = 16;
+    newMissile->inRect.x = 0; newMissile->inRect.y = 16 * newMissile->orientation;
+    newMissile->outRect.x = (int) floor(newMissile->xPosition + 0.5f);
+    newMissile->outRect.y = (int) floor(newMissile->yPosition + 0.5f);
+
+    return newMissile;
+}
+
+void updateMissile (MissileLogic& missile) {
+    missile.xPosition += missile.xVelocity;
+    missile.yPosition += missile.yVelocity;
+
+    missile.outRect.x = (int) floor(missile.xPosition + 0.5f);
+    missile.outRect.y = (int) floor(missile.yPosition + 0.5f);
+}
 
 int main(int argc, char **argv) {
 
@@ -57,6 +107,8 @@ int main(int argc, char **argv) {
 
 
 /// RESOURCES INIT
+
+    MissileLogic daMissile;
 
 // Prepare logic
     BoxLogic daBox;
@@ -112,36 +164,40 @@ int main(int argc, char **argv) {
         if (e.type == SDL_KEYDOWN) {
             switch (e.key.keysym.sym) {
 
-            case SDLK_UP:
-                //cout << "UPd; ";
+            case SDLK_z:
                 daBox.directions[0] = 1;
                 break;
-            case SDLK_RIGHT:
-                //cout << "RIGHTd; ";
+            case SDLK_d:
                 daBox.directions[1] = 1;
                 break;
-            case SDLK_DOWN:
-                //cout << "DOWNd; ";
+            case SDLK_s:
                 daBox.directions[2] = 1;
                 break;
-            case SDLK_LEFT:
-                //cout << "LEFTd; ";
+            case SDLK_q:
                 daBox.directions[3] = 1;
                 break;
 
-            case SDLK_z:
+            case SDLK_UP:
+                //cout << "UPd; ";
                 daBox.orientation = 0;
                 break;
-            case SDLK_d:
+            case SDLK_RIGHT:
+                //cout << "RIGHTd; ";
                 daBox.orientation = 1;
                 break;
-            case SDLK_s:
+            case SDLK_DOWN:
+                //cout << "DOWNd; ";
                 daBox.orientation = 2;
                 break;
-            case SDLK_q:
+            case SDLK_LEFT:
+                //cout << "LEFTd; ";
                 daBox.orientation = 3;
                 break;
 
+            case SDLK_SPACE:
+                daMissile = *makeMissile(renderer, daBox);
+                missileFired = true;
+                break;
 
             case SDLK_ESCAPE:
                 running = false;
@@ -150,19 +206,19 @@ int main(int argc, char **argv) {
         }
         if (e.type == SDL_KEYUP) {
             switch (e.key.keysym.sym) {
-            case SDLK_UP:
+            case SDLK_z:
                 //cout << "UPu; ";
                 daBox.directions[0] = 0;
                 break;
-            case SDLK_RIGHT:
+            case SDLK_d:
                 //cout << "RIGHTu; ";
                 daBox.directions[1] = 0;
                 break;
-            case SDLK_DOWN:
+            case SDLK_s:
                 //cout << "DOWNu; ";
                 daBox.directions[2] = 0;
                 break;
-            case SDLK_LEFT:
+            case SDLK_q:
                 //cout << "LEFTu; ";
                 daBox.directions[3] = 0;
                 break;
@@ -185,18 +241,18 @@ int main(int argc, char **argv) {
 
         // Check for overflows
             // Outer bounds
-            if (daBox.xVelocity > MAX_SPEED) daBox.xVelocity = MAX_SPEED;
-            if (daBox.xVelocity < -MAX_SPEED) daBox.xVelocity = -MAX_SPEED;
-            if (daBox.yVelocity > MAX_SPEED) daBox.yVelocity = MAX_SPEED;
-            if (daBox.yVelocity < -MAX_SPEED) daBox.yVelocity = -MAX_SPEED;
+            if (daBox.xVelocity > MAX_SPEED) {daBox.xVelocity = MAX_SPEED;}
+            if (daBox.xVelocity < -MAX_SPEED) {daBox.xVelocity = -MAX_SPEED;}
+            if (daBox.yVelocity > MAX_SPEED) {daBox.yVelocity = MAX_SPEED;}
+            if (daBox.yVelocity < -MAX_SPEED) {daBox.yVelocity = -MAX_SPEED;}
 
             // Inner bounds, so that it doesn't keep endlessly precise floats
-            if ((daBox.xVelocity > 0 && daBox.xVelocity < PRECISION) ||
-                (daBox.xVelocity < 0 && daBox.xVelocity > -PRECISION))
-                {daBox.xVelocity = 0;}
-            if ((daBox.yVelocity > 0 && daBox.yVelocity < PRECISION) ||
-                (daBox.yVelocity < 0 && daBox.yVelocity > -PRECISION))
-                {daBox.yVelocity = 0;}
+            if (daBox.xVelocity != 0 && daBox.xVelocity < PRECISION && daBox.xVelocity > -PRECISION) {
+                daBox.xVelocity = 0;
+            }
+            if (daBox.yVelocity != 0 && daBox.yVelocity < PRECISION && daBox.yVelocity > -PRECISION) {
+                daBox.yVelocity = 0;
+            }
 
         // At last apply the velocity vector to the position
             daBox.xPosition += daBox.xVelocity;
@@ -224,6 +280,9 @@ int main(int argc, char **argv) {
             daBox.outRect.x = (int) floor(daBox.xPosition + 0.5f);
             daBox.outRect.y = (int) floor(daBox.yPosition + 0.5f);
 
+            if (missileFired)
+                updateMissile(daMissile);
+
         // ..Aaaaand update the lag counter
             lag -= SCREEN_TPF;
         }
@@ -232,13 +291,17 @@ int main(int argc, char **argv) {
 
         //cout << daBox.xVelocity << "; " << daBox.yVelocity << endl;
         SDL_RenderClear(renderer);
+        SDL_RenderCopy(renderer, daMissile.sprite, &daMissile.inRect, &daMissile.outRect);
         SDL_RenderCopy(renderer, daBox.sprite, &daBox.inRect, &daBox.outRect);
         SDL_UpdateWindowSurface(window);
 
         //SDL_Delay(250);
     }
 
+    SDL_DestroyTexture(daBox.sprite);
     daBox.sprite = NULL;
+    SDL_DestroyRenderer(renderer);
+    renderer = NULL;
     SDL_DestroyWindow(window);
     window = NULL;
 
