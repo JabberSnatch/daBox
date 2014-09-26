@@ -34,7 +34,7 @@ int main(int argc, char **argv) {
     screen = SDL_GetWindowSurface(window);
     renderer = SDL_CreateSoftwareRenderer(screen);
 
-/// Sprite loading
+/// Sprites loading
     SDL_Surface * tmp = SDL_LoadBMP("assets/daBox.bmp");
     if (!tmp) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Bitmap loading fail : %s\n", SDL_GetError());
@@ -55,14 +55,13 @@ int main(int argc, char **argv) {
 
 /// RESOURCES INIT
 
-    MissileLogic* daMissile = new MissileLogic;
-    daMissile->alive = false;
-
     vector<MissileLogic*> daMissiles;
     BoxLogic daBox;
 
     initBox (daBox, boxSprite);
 
+    unsigned int lastShootDate = 0;
+    bool firing = false;
 
 
 /// GAME LOOP INIT
@@ -122,10 +121,7 @@ int main(int argc, char **argv) {
                 break;
 
             case SDLK_SPACE:
-                if (!daMissile->alive) {
-                    daMissile = makeMissile(daBox, missileSprite);
-                    daMissile->alive = true;
-                }
+                firing = true;
                 break;
 
             case SDLK_ESCAPE:
@@ -151,16 +147,30 @@ int main(int argc, char **argv) {
                 //cout << "LEFTu; ";
                 daBox.directions[3] = 0;
                 break;
+
+            case SDLK_SPACE:
+                firing = false;
+                break;
             }
         }
 
 /// UPDATE
+        if (firing && lastShootDate + FIRING_DELAY < SDL_GetTicks()) {
+            daMissiles.push_back(makeMissile(daBox, missileSprite));
+            lastShootDate = SDL_GetTicks();
+        }
         while(lag >= SCREEN_TPF) {
 
             updateBox(daBox);
 
-            if (daMissile->alive)
-                updateMissile(daMissile);
+            for (unsigned int i = 0; i < daMissiles.size(); i++) {
+                if (daMissiles[i]->alive)
+                    updateMissile(daMissiles[i]);
+                else {
+                    delete daMissiles[i];
+                    daMissiles.erase(daMissiles.begin()+i);
+                }
+            }
 
         // ..Aaaaand update the lag counter
             lag -= SCREEN_TPF;
@@ -171,14 +181,11 @@ int main(int argc, char **argv) {
         //cout << daBox.xVelocity << "; " << daBox.yVelocity << endl;
         SDL_RenderClear(renderer);
 
-        if (daMissile->alive) {
-            renderMissile(renderer, daMissile);
-        }
+        for (unsigned int i = 0; i < daMissiles.size(); i++)
+            renderMissile(renderer, daMissiles[i]);
         renderBox(renderer, daBox);
 
         SDL_UpdateWindowSurface(window);
-
-        //SDL_Delay(250);
     }
 
     SDL_DestroyTexture(boxSprite);
