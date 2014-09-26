@@ -80,6 +80,10 @@ void updateMissile (MissileLogic& missile) {
     missile.xPosition += missile.xVelocity;
     missile.yPosition += missile.yVelocity;
 
+    if ((missile.xPosition > SCREEN_WIDTH+missile.outRect.w) || (missile.xPosition < -missile.outRect.w) ||
+         (missile.yPosition > SCREEN_HEIGHT+missile.outRect.h) || (missile.yPosition < -missile.outRect.h))
+         missileFired = false;
+
     missile.outRect.x = (int) floor(missile.xPosition + 0.5f);
     missile.outRect.y = (int) floor(missile.yPosition + 0.5f);
 }
@@ -195,8 +199,10 @@ int main(int argc, char **argv) {
                 break;
 
             case SDLK_SPACE:
-                daMissile = *makeMissile(renderer, daBox);
-                missileFired = true;
+                if (!missileFired) {
+                    daMissile = *makeMissile(renderer, daBox);
+                    missileFired = true;
+                }
                 break;
 
             case SDLK_ESCAPE:
@@ -291,8 +297,12 @@ int main(int argc, char **argv) {
 
         //cout << daBox.xVelocity << "; " << daBox.yVelocity << endl;
         SDL_RenderClear(renderer);
-        SDL_RenderCopy(renderer, daMissile.sprite, &daMissile.inRect, &daMissile.outRect);
+
+        if (missileFired) {
+            SDL_RenderCopy(renderer, daMissile.sprite, &daMissile.inRect, &daMissile.outRect);
+        }
         SDL_RenderCopy(renderer, daBox.sprite, &daBox.inRect, &daBox.outRect);
+
         SDL_UpdateWindowSurface(window);
 
         //SDL_Delay(250);
