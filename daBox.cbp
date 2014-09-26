@@ -31,6 +31,11 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="BoxLogic.cpp" />
+		<Unit filename="BoxLogic.h" />
+		<Unit filename="GlobalConstants.h" />
+		<Unit filename="MissileLogic.cpp" />
+		<Unit filename="MissileLogic.h" />
 		<Unit filename="daBox.cpp" />
 		<Extensions>
 			<code_completion />
