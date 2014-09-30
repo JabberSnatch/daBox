@@ -1,6 +1,7 @@
 #include "MissileLogic.h"
 
 #include <math.h>
+#include <iostream>
 
 #include "GlobalConstants.h"
 
@@ -21,11 +22,16 @@ void initMissile (MissileLogic* missile, SDL_Texture* sprite, int orientation, d
     missile->outRect.x = (int) floor(missile->xPosition + 0.5f);
     missile->outRect.y = (int) floor(missile->yPosition + 0.5f);
 
+    // TODO (Samu#3#): Maybe rethink how the missile's hitBox is handled
     missile->hitBox.w = ((missile->orientation == 1 || missile->orientation == 3) * 14) +
-                            ((missile->orientation == 2 || missile->orientation == 0) * 2);
-    missile->hitBox.h = ((missile->hitBox.w == 14) * 2) + ((missile->hitBox.w == 2) * 14);
-    missile->hitBox.x = missile->outRect.x;
-    missile->hitBox.y = missile->outRect.y;
+                            ((missile->orientation == 2 || missile->orientation == 0) * 6);
+    missile->hitBox.h = ((missile->hitBox.w == 14) * 6) + ((missile->hitBox.w == 6) * 14);
+
+    missile->hitBox.x = missile->outRect.x+(missile->outRect.w - missile->hitBox.w)/2;
+    missile->hitBox.y = missile->outRect.y+(missile->outRect.h - missile->hitBox.h)/2;
+
+    std::cout << missile->hitBox.w << "; " << missile->hitBox.h << "; " << missile->hitBox.x << "; " << missile->hitBox.y << std::endl;
+    std::cout << missile->outRect.w << "; " << missile->outRect.h << "; " << missile->outRect.x << "; " << missile->outRect.y << std::endl;
 }
 
 void updateMissile (MissileLogic* missile) {
@@ -38,8 +44,8 @@ void updateMissile (MissileLogic* missile) {
 
     missile->outRect.x = (int) floor(missile->xPosition + 0.5f);
     missile->outRect.y = (int) floor(missile->yPosition + 0.5f);
-    missile->hitBox.x = missile->outRect.x;
-    missile->hitBox.y = missile->outRect.y;
+    missile->hitBox.x = missile->outRect.x+(missile->outRect.w - missile->hitBox.w)/2;
+    missile->hitBox.y = missile->outRect.y+(missile->outRect.h - missile->hitBox.h)/2;
 }
 
 void renderMissile (SDL_Renderer* renderer, MissileLogic* missile) {

@@ -67,13 +67,13 @@ int main(int argc, char **argv) {
 
 /// RESOURCES INIT
 
-    BoxLogic protoEnemy;
-    initBox (protoEnemy, enemySprite, 50.0f, 30.0f);
-
     vector<MissileLogic*> daMissiles;
 
     BoxLogic daBox;
     initBox (daBox, boxSprite);
+
+    BoxLogic protoEnemy;
+    initBox (protoEnemy, enemySprite, daBox.xPosition-7, 0);
 
     unsigned int lastShootDate = 0;
     bool firing = false;
