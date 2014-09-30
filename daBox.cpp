@@ -35,6 +35,7 @@ int main(int argc, char **argv) {
     renderer = SDL_CreateSoftwareRenderer(screen);
 
 /// Sprites loading
+    /// boxSprite
     SDL_Surface * tmp = SDL_LoadBMP("assets/daBox.bmp");
     if (!tmp) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Bitmap loading fail : %s\n", SDL_GetError());
@@ -44,6 +45,7 @@ int main(int argc, char **argv) {
     SDL_Texture * boxSprite = SDL_CreateTextureFromSurface(renderer, tmp);
     SDL_FreeSurface(tmp);
 
+    /// missileSprite
     tmp = SDL_LoadBMP("assets/missile.bmp");
     if (!tmp) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Bitmap loading fail : %s\n", SDL_GetError());
@@ -51,6 +53,16 @@ int main(int argc, char **argv) {
     }
     SDL_SetColorKey(tmp, SDL_TRUE, SDL_MapRGB(tmp->format, 255, 0, 255));
     SDL_Texture * missileSprite = SDL_CreateTextureFromSurface(renderer, tmp);
+    SDL_FreeSurface(tmp);
+
+    /// ennemySprite
+    tmp = SDL_LoadBMP("assets/evilBox.bmp");
+    if (!tmp) {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Bitmap loading fail : %s\n", SDL_GetError());
+        return 1;
+    }
+    SDL_SetColorKey(tmp, SDL_TRUE, SDL_MapRGB(tmp->format, 255, 0, 255));
+    SDL_Texture * ennemySprite = SDL_CreateTextureFromSurface(renderer, tmp);
     SDL_FreeSurface(tmp);
 
 /// RESOURCES INIT
