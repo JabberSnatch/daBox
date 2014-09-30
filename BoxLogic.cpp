@@ -1,6 +1,7 @@
 #include "BoxLogic.h"
 
 #include <math.h>
+#include <iostream>
 
 #include "GlobalConstants.h"
 
@@ -30,6 +31,9 @@ void initBox (BoxLogic& daBox, SDL_Texture* sprite, double x, double y) {
     daBox.hitBox.w = daBox.outRect.w-2;
     daBox.hitBox.x = daBox.outRect.x;
     daBox.hitBox.y = daBox.outRect.y;
+
+    std::cout << daBox.hitBox.h << "; " << daBox.hitBox.w << ";" << daBox.hitBox.x << "; " << daBox.hitBox.y << std::endl;
+    std::cout << daBox.outRect.h << "; " << daBox.outRect.w << ";" << daBox.outRect.x << "; " << daBox.outRect.y << std::endl;
 }
 
 void updateBox (BoxLogic & daBox) {
@@ -106,4 +110,21 @@ MissileLogic* fireMissile (BoxLogic& launcher, SDL_Texture* missileSprite) {
     initMissile(newMissile, missileSprite, launcher.orientation, launcher.xPosition, launcher.yPosition);
 
     return newMissile;
+}
+
+// Should collide update the entities or should it simply return a boolean ?
+// Let's try updating entities
+bool collide (BoxLogic* daBox, MissileLogic* missile) {
+    bool collide = false;
+
+    if (SDL_HasIntersection(&daBox->hitBox, &missile->hitBox)) {
+        collide = true;
+        //daBox->alive = false;
+        missile->alive = false;
+        std::cout << missile->hitBox.w << "; " << missile->hitBox.h << "; " << missile->hitBox.x << "; " << missile->hitBox.y << std::endl;
+        std::cout << missile->outRect.w << "; " << missile->outRect.h << "; " << missile->outRect.x << "; " << missile->outRect.y << std::endl;
+        std::cout << "HIT !" << std::endl;
+    }
+
+    return collide;
 }

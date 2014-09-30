@@ -29,6 +29,6 @@ void renderBox (SDL_Renderer* renderer, BoxLogic & daBox);
 
 MissileLogic* fireMissile (BoxLogic& launcher, SDL_Texture* missileSprite);
 
-void collide (BoxLogic& daBox, MissileLogic& missile);
+bool collide (BoxLogic* daBox, MissileLogic* missile);
 
 #endif // BOXLOGIC_H_INCLUDED

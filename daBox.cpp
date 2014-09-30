@@ -179,8 +179,10 @@ int main(int argc, char **argv) {
             updateBox(daBox);
 
             for (unsigned int i = 0; i < daMissiles.size(); i++) {
-                if (daMissiles[i]->alive)
+                if (daMissiles[i]->alive) {
                     updateMissile(daMissiles[i]);
+                    collide(&protoEnemy, daMissiles[i]);
+                }
                 else {
                     delete daMissiles[i];
                     daMissiles.erase(daMissiles.begin()+i);
