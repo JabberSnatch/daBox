@@ -11,6 +11,8 @@ void initBox (BoxLogic & daBox, SDL_Texture * sprite) {
 void initBox (BoxLogic& daBox, SDL_Texture* sprite, double x, double y) {
     daBox.sprite = sprite;
 
+    daBox.alive = true;
+
     for (int i = 0; i < 4; i++){
         daBox.directions[i] = 0;
     }
@@ -23,6 +25,11 @@ void initBox (BoxLogic& daBox, SDL_Texture* sprite, double x, double y) {
     daBox.outRect.x = (int) floor(daBox.xPosition + 0.5f);
     daBox.outRect.y = (int) floor(daBox.yPosition + 0.5f);
     daBox.inRect.x = daBox.inRect.y = 0;
+
+    daBox.hitBox.h = daBox.outRect.h-2;
+    daBox.hitBox.w = daBox.outRect.w-2;
+    daBox.hitBox.x = daBox.outRect.x;
+    daBox.hitBox.y = daBox.outRect.y;
 }
 
 void updateBox (BoxLogic & daBox) {
@@ -85,8 +92,18 @@ void updateBox (BoxLogic & daBox) {
 // Convert the precise position into pixels position
     daBox.outRect.x = (int) floor(daBox.xPosition + 0.5f);
     daBox.outRect.y = (int) floor(daBox.yPosition + 0.5f);
+    daBox.hitBox.x = daBox.outRect.x;
+    daBox.hitBox.y = daBox.outRect.y;
 }
 
 void renderBox (SDL_Renderer* renderer, BoxLogic & daBox) {
     SDL_RenderCopy(renderer, daBox.sprite, &daBox.inRect, &daBox.outRect);
+}
+
+MissileLogic* fireMissile (BoxLogic& launcher, SDL_Texture* missileSprite) {
+    MissileLogic* newMissile = new MissileLogic;
+
+    initMissile(newMissile, missileSprite, launcher.orientation, launcher.xPosition, launcher.yPosition);
+
+    return newMissile;
 }

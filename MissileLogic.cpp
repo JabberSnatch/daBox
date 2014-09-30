@@ -4,24 +4,28 @@
 
 #include "GlobalConstants.h"
 
-MissileLogic* makeMissile (BoxLogic& launcher, SDL_Texture* sprite) {
-    MissileLogic* newMissile = new MissileLogic;
+void initMissile (MissileLogic* missile, SDL_Texture* sprite, int orientation, double x, double y) {
+    missile->sprite = sprite;
 
-    newMissile->sprite = sprite;
+    missile->alive = true;
 
-    newMissile->alive = true;
+    missile->orientation = orientation;
+    missile->xPosition = x;
+    missile->yPosition = y;
+    missile->xVelocity = ((missile->orientation == 1) - (missile->orientation == 3)) * MISSILE_SPEED;
+    missile->yVelocity = ((missile->orientation == 2) - (missile->orientation == 0)) * MISSILE_SPEED;
 
-    newMissile->orientation = launcher.orientation;
-    newMissile->xPosition = launcher.xPosition; newMissile->yPosition = launcher.yPosition;
-    newMissile->xVelocity = ((newMissile->orientation == 1) - (newMissile->orientation == 3)) * MISSILE_SPEED;
-    newMissile->yVelocity = ((newMissile->orientation == 2) - (newMissile->orientation == 0)) * MISSILE_SPEED;
+    missile->outRect.w = missile->outRect.h = missile->inRect.w = missile->inRect.h = 16;
+    missile->inRect.x = 0;
+    missile->inRect.y = 16 * missile->orientation;
+    missile->outRect.x = (int) floor(missile->xPosition + 0.5f);
+    missile->outRect.y = (int) floor(missile->yPosition + 0.5f);
 
-    newMissile->outRect.w = newMissile->outRect.h = newMissile->inRect.w = newMissile->inRect.h = 16;
-    newMissile->inRect.x = 0; newMissile->inRect.y = 16 * newMissile->orientation;
-    newMissile->outRect.x = (int) floor(newMissile->xPosition + 0.5f);
-    newMissile->outRect.y = (int) floor(newMissile->yPosition + 0.5f);
-
-    return newMissile;
+    missile->hitBox.w = ((missile->orientation == 1 || missile->orientation == 3) * 14) +
+                            ((missile->orientation == 2 || missile->orientation == 0) * 2);
+    missile->hitBox.h = ((missile->hitBox.w == 14) * 2) + ((missile->hitBox.w == 2) * 14);
+    missile->hitBox.x = missile->outRect.x;
+    missile->hitBox.y = missile->outRect.y;
 }
 
 void updateMissile (MissileLogic* missile) {
@@ -34,6 +38,8 @@ void updateMissile (MissileLogic* missile) {
 
     missile->outRect.x = (int) floor(missile->xPosition + 0.5f);
     missile->outRect.y = (int) floor(missile->yPosition + 0.5f);
+    missile->hitBox.x = missile->outRect.x;
+    missile->hitBox.y = missile->outRect.y;
 }
 
 void renderMissile (SDL_Renderer* renderer, MissileLogic* missile) {

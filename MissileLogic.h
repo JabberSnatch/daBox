@@ -3,8 +3,6 @@
 
 #include "SDL.h"
 
-#include "BoxLogic.h"
-
 struct MissileLogic {
     SDL_Texture * sprite;
 
@@ -17,9 +15,11 @@ struct MissileLogic {
 
     SDL_Rect outRect;
     SDL_Rect inRect;
+
+    SDL_Rect hitBox;
 };
 
-MissileLogic* makeMissile (BoxLogic& launcher, SDL_Texture* sprite);
+void initMissile (MissileLogic* missile, SDL_Texture* sprite, int orientation, double x, double y);
 void updateMissile (MissileLogic* missile);
 void renderMissile (SDL_Renderer* renderer, MissileLogic* missile);
 

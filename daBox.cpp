@@ -171,7 +171,7 @@ int main(int argc, char **argv) {
 
 /// UPDATE
         if (firing && lastShootDate + FIRING_DELAY < SDL_GetTicks()) {
-            daMissiles.push_back(makeMissile(daBox, missileSprite));
+            daMissiles.push_back(fireMissile(daBox, missileSprite));
             lastShootDate = SDL_GetTicks();
         }
         while(lag >= SCREEN_TPF) {
