@@ -55,21 +55,24 @@ int main(int argc, char **argv) {
     SDL_Texture * missileSprite = SDL_CreateTextureFromSurface(renderer, tmp);
     SDL_FreeSurface(tmp);
 
-    /// ennemySprite
+    /// enemySprite
     tmp = SDL_LoadBMP("assets/evilBox.bmp");
     if (!tmp) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Bitmap loading fail : %s\n", SDL_GetError());
         return 1;
     }
     SDL_SetColorKey(tmp, SDL_TRUE, SDL_MapRGB(tmp->format, 255, 0, 255));
-    SDL_Texture * ennemySprite = SDL_CreateTextureFromSurface(renderer, tmp);
+    SDL_Texture * enemySprite = SDL_CreateTextureFromSurface(renderer, tmp);
     SDL_FreeSurface(tmp);
 
 /// RESOURCES INIT
 
-    vector<MissileLogic*> daMissiles;
-    BoxLogic daBox;
+    BoxLogic protoEnemy;
+    initBox (protoEnemy, enemySprite, 50.0f, 30.0f);
 
+    vector<MissileLogic*> daMissiles;
+
+    BoxLogic daBox;
     initBox (daBox, boxSprite);
 
     unsigned int lastShootDate = 0;
@@ -196,6 +199,7 @@ int main(int argc, char **argv) {
         for (unsigned int i = 0; i < daMissiles.size(); i++)
             renderMissile(renderer, daMissiles[i]);
         renderBox(renderer, daBox);
+        renderBox(renderer, protoEnemy);
 
         SDL_UpdateWindowSurface(window);
     }

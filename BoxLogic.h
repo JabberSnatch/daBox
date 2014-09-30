@@ -17,6 +17,7 @@ struct BoxLogic {
 };
 
 void initBox (BoxLogic & daBox, SDL_Texture* sprite);
+void initBox (BoxLogic & daBox, SDL_Texture* sprite, double x, double y);
 void updateBox (BoxLogic & daBox);
 void renderBox (SDL_Renderer* renderer, BoxLogic & daBox);
 

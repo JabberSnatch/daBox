@@ -5,6 +5,10 @@
 #include "GlobalConstants.h"
 
 void initBox (BoxLogic & daBox, SDL_Texture * sprite) {
+    initBox(daBox, sprite, (SCREEN_WIDTH-16)/2, (SCREEN_HEIGHT-16)/2);
+}
+
+void initBox (BoxLogic& daBox, SDL_Texture* sprite, double x, double y) {
     daBox.sprite = sprite;
 
     for (int i = 0; i < 4; i++){
@@ -14,8 +18,8 @@ void initBox (BoxLogic & daBox, SDL_Texture * sprite) {
     daBox.xVelocity = daBox.yVelocity = 0;
 
     daBox.outRect.h = daBox.outRect.w = daBox.inRect.h = daBox.inRect.w = 16;
-    daBox.xPosition = (SCREEN_WIDTH-daBox.outRect.h)/2;
-    daBox.yPosition = (SCREEN_HEIGHT-daBox.outRect.w)/2;
+    daBox.xPosition = x;
+    daBox.yPosition = y;
     daBox.outRect.x = (int) floor(daBox.xPosition + 0.5f);
     daBox.outRect.y = (int) floor(daBox.yPosition + 0.5f);
     daBox.inRect.x = daBox.inRect.y = 0;
