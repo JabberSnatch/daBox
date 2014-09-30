@@ -22,7 +22,9 @@ void initMissile (MissileLogic* missile, SDL_Texture* sprite, int orientation, d
     missile->outRect.x = (int) floor(missile->xPosition + 0.5f);
     missile->outRect.y = (int) floor(missile->yPosition + 0.5f);
 
-    // TODO (Samu#3#): Maybe rethink how the missile's hitBox is handled
+    /* TODO (Samu#3#): Maybe rethink how the missile's hitBox is handled
+    *                   I should also make a constant to store the hitbox width and height
+    */
     missile->hitBox.w = ((missile->orientation == 1 || missile->orientation == 3) * 14) +
                             ((missile->orientation == 2 || missile->orientation == 0) * 6);
     missile->hitBox.h = ((missile->hitBox.w == 14) * 6) + ((missile->hitBox.w == 6) * 14);
