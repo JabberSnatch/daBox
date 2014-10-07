@@ -100,6 +100,36 @@ void updateBox (BoxLogic & daBox) {
     daBox.hitBox.y = daBox.outRect.y+1;
 }
 
+void updateBoxTowards(BoxLogic* daBox, BoxLogic* target) {
+    if (daBox->xPosition < target->xPosition) {
+        daBox->directions[1] = 1;
+        daBox->directions[3] = 0;
+    }
+    else if (daBox->xPosition > target->xPosition) {
+        daBox->directions[3] = 1;
+        daBox->directions[1] = 0;
+    }
+    else {
+        daBox->directions[1] = 0;
+        daBox->directions[3] = 0;
+    }
+
+    if (daBox->yPosition < target->yPosition) {
+        daBox->directions[2] = 1;
+        daBox->directions[0] = 0;
+    }
+    else if (daBox->yPosition > target->yPosition) {
+        daBox->directions[0] = 1;
+        daBox->directions[2] = 0;
+    }
+    else {
+        daBox->directions[0] = 0;
+        daBox->directions[2] = 0;
+    }
+
+    updateBox(*daBox);
+}
+
 void renderBox (SDL_Renderer* renderer, BoxLogic & daBox) {
     SDL_RenderCopy(renderer, daBox.sprite, &daBox.inRect, &daBox.outRect);
 }
@@ -119,7 +149,7 @@ bool collide (BoxLogic* daBox, MissileLogic* missile) {
 
     if (SDL_HasIntersection(&daBox->hitBox, &missile->hitBox)) {
         collide = true;
-        //daBox->alive = false;
+        daBox->alive = false;
         missile->alive = false;
         std::cout << "HIT !" << std::endl;
     }
