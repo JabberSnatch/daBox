@@ -105,7 +105,6 @@ void updateBox (BoxLogic & daBox) {
 }
 
 void updateEnemy(BoxLogic& enemy, BoxLogic& target) {
-    // TODO(Samu#1#): Use pythagora and thales to find the delta X and Y of the enemy
 
     double a = target.xPosition - enemy.xPosition;
     double b = target.yPosition - enemy.yPosition;
@@ -115,7 +114,6 @@ void updateEnemy(BoxLogic& enemy, BoxLogic& target) {
     enemy.xVelocity = a * coeff;
     enemy.yVelocity = b * coeff;
 
-    // At last apply the velocity vector to the position
     enemy.xPosition += enemy.xVelocity;
     enemy.yPosition += enemy.yVelocity;
 

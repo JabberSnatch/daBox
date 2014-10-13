@@ -5,6 +5,8 @@
 
 #include "MissileLogic.h"
 
+// TODO(Samu#1#): Decoupling enemy and box might be a good idea...
+
 struct BoxLogic {
     SDL_Texture * sprite;
 
