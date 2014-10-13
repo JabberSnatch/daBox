@@ -7,6 +7,7 @@
 
 void initBox (BoxLogic & daBox, SDL_Texture * sprite) {
     initBox(daBox, sprite, (SCREEN_WIDTH-16)/2, (SCREEN_HEIGHT-16)/2);
+    daBox.maxVelocity = MAX_SPEED;
 }
 
 void initBox (BoxLogic& daBox, SDL_Texture* sprite, double x, double y) {
@@ -32,8 +33,10 @@ void initBox (BoxLogic& daBox, SDL_Texture* sprite, double x, double y) {
     daBox.hitBox.x = daBox.outRect.x+1;
     daBox.hitBox.y = daBox.outRect.y+1;
 
-    std::cout << daBox.hitBox.h << "; " << daBox.hitBox.w << "; " << daBox.hitBox.x << "; " << daBox.hitBox.y << std::endl;
-    std::cout << daBox.outRect.h << "; " << daBox.outRect.w << "; " << daBox.outRect.x << "; " << daBox.outRect.y << std::endl;
+    daBox.maxVelocity = ENEMY_MAX_SPEED;
+
+    //std::cout << daBox.hitBox.h << "; " << daBox.hitBox.w << "; " << daBox.hitBox.x << "; " << daBox.hitBox.y << std::endl;
+    //std::cout << daBox.outRect.h << "; " << daBox.outRect.w << "; " << daBox.outRect.x << "; " << daBox.outRect.y << std::endl;
 }
 
 void updateBox (BoxLogic & daBox) {
@@ -50,17 +53,17 @@ void updateBox (BoxLogic & daBox) {
 
 // Check for overflows
     // Outer bounds
-    if (daBox.xVelocity > MAX_SPEED) {
-        daBox.xVelocity = MAX_SPEED;
+    if (daBox.xVelocity > daBox.maxVelocity) {
+        daBox.xVelocity = daBox.maxVelocity;
     }
-    if (daBox.xVelocity < -MAX_SPEED) {
-        daBox.xVelocity = -MAX_SPEED;
+    if (daBox.xVelocity < -daBox.maxVelocity) {
+        daBox.xVelocity = -daBox.maxVelocity;
     }
-    if (daBox.yVelocity > MAX_SPEED) {
-        daBox.yVelocity = MAX_SPEED;
+    if (daBox.yVelocity > daBox.maxVelocity) {
+        daBox.yVelocity = daBox.maxVelocity;
     }
-    if (daBox.yVelocity < -MAX_SPEED) {
-        daBox.yVelocity = -MAX_SPEED;
+    if (daBox.yVelocity < -daBox.maxVelocity) {
+        daBox.yVelocity = -daBox.maxVelocity;
     }
 
     // Inner bounds, so that it doesn't keep endlessly precise floats
@@ -100,34 +103,32 @@ void updateBox (BoxLogic & daBox) {
     daBox.hitBox.y = daBox.outRect.y+1;
 }
 
-void updateBoxTowards(BoxLogic* daBox, BoxLogic* target) {
-    if (daBox->xPosition < target->xPosition) {
-        daBox->directions[1] = 1;
-        daBox->directions[3] = 0;
+void setDirectionsTowards(BoxLogic& daBox, BoxLogic& target) {
+    if (daBox.xPosition < target.xPosition) {
+        daBox.directions[1] = 1;
+        daBox.directions[3] = 0;
     }
-    else if (daBox->xPosition > target->xPosition) {
-        daBox->directions[3] = 1;
-        daBox->directions[1] = 0;
-    }
-    else {
-        daBox->directions[1] = 0;
-        daBox->directions[3] = 0;
-    }
-
-    if (daBox->yPosition < target->yPosition) {
-        daBox->directions[2] = 1;
-        daBox->directions[0] = 0;
-    }
-    else if (daBox->yPosition > target->yPosition) {
-        daBox->directions[0] = 1;
-        daBox->directions[2] = 0;
+    else if (daBox.xPosition > target.xPosition) {
+        daBox.directions[3] = 1;
+        daBox.directions[1] = 0;
     }
     else {
-        daBox->directions[0] = 0;
-        daBox->directions[2] = 0;
+        daBox.directions[1] = 0;
+        daBox.directions[3] = 0;
     }
 
-    updateBox(*daBox);
+    if (daBox.yPosition < target.yPosition) {
+        daBox.directions[2] = 1;
+        daBox.directions[0] = 0;
+    }
+    else if (daBox.yPosition > target.yPosition) {
+        daBox.directions[0] = 1;
+        daBox.directions[2] = 0;
+    }
+    else {
+        daBox.directions[0] = 0;
+        daBox.directions[2] = 0;
+    }
 }
 
 void renderBox (SDL_Renderer* renderer, BoxLogic & daBox) {

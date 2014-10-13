@@ -177,7 +177,9 @@ int main(int argc, char **argv) {
         while(lag >= SCREEN_TPF) {
 
             updateBox(daBox);
-            //updateBoxTowards(&protoEnemy, &daBox);
+
+            setDirectionsTowards(protoEnemy, daBox);
+            updateBox(protoEnemy);
 
             for (unsigned int i = 0; i < daMissiles.size(); i++) {
                 if (daMissiles[i]->alive) {

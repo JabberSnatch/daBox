@@ -26,7 +26,7 @@ struct BoxLogic {
 void initBox (BoxLogic & daBox, SDL_Texture* sprite);
 void initBox (BoxLogic & daBox, SDL_Texture* sprite, double x, double y);
 void updateBox (BoxLogic & daBox);
-void updateBoxTowards (BoxLogic* daBox, BoxLogic* target);
+void setDirectionsTowards (BoxLogic& daBox, BoxLogic& target);
 void renderBox (SDL_Renderer* renderer, BoxLogic & daBox);
 
 MissileLogic* fireMissile (BoxLogic& launcher, SDL_Texture* missileSprite);
