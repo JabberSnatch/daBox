@@ -19,8 +19,8 @@ struct MissileLogic {
     SDL_Rect hitBox;
 };
 
-void initMissile (MissileLogic* missile, SDL_Texture* sprite, int orientation, double x, double y);
-void updateMissile (MissileLogic* missile);
-void renderMissile (SDL_Renderer* renderer, MissileLogic* missile);
+void initMissile (MissileLogic& missile, SDL_Texture* sprite, int orientation, double x, double y);
+void updateMissile (MissileLogic& missile);
+void renderMissile (SDL_Renderer* renderer, MissileLogic& missile);
 
 #endif // MISSILELOGIC_H_INCLUDED

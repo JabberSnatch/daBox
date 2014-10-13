@@ -135,8 +135,8 @@ void renderBox (SDL_Renderer* renderer, BoxLogic & daBox) {
     SDL_RenderCopy(renderer, daBox.sprite, &daBox.inRect, &daBox.outRect);
 }
 
-MissileLogic* fireMissile (BoxLogic& launcher, SDL_Texture* missileSprite) {
-    MissileLogic* newMissile = new MissileLogic;
+MissileLogic fireMissile (BoxLogic& launcher, SDL_Texture* missileSprite) {
+    MissileLogic newMissile;
 
     initMissile(newMissile, missileSprite, launcher.orientation, launcher.xPosition, launcher.yPosition);
 
@@ -145,13 +145,13 @@ MissileLogic* fireMissile (BoxLogic& launcher, SDL_Texture* missileSprite) {
 
 // Should collide update the entities or should it simply return a boolean ?
 // Let's try updating entities
-bool collide (BoxLogic* daBox, MissileLogic* missile) {
+bool collide (BoxLogic& daBox, MissileLogic& missile) {
     bool collide = false;
 
-    if (SDL_HasIntersection(&daBox->hitBox, &missile->hitBox)) {
+    if (SDL_HasIntersection(&daBox.hitBox, &missile.hitBox)) {
         collide = true;
-        daBox->alive = false;
-        missile->alive = false;
+        daBox.alive = false;
+        missile.alive = false;
         std::cout << "HIT !" << std::endl;
     }
 

@@ -67,7 +67,7 @@ int main(int argc, char **argv) {
 
 /// RESOURCES INIT
 
-    vector<MissileLogic*> daMissiles;
+    vector<MissileLogic> daMissiles;
 
     BoxLogic daBox;
     initBox (daBox, boxSprite);
@@ -182,12 +182,11 @@ int main(int argc, char **argv) {
             updateBox(protoEnemy);
 
             for (unsigned int i = 0; i < daMissiles.size(); i++) {
-                if (daMissiles[i]->alive) {
+                if (daMissiles[i].alive) {
                     updateMissile(daMissiles[i]);
-                    collide(&protoEnemy, daMissiles[i]);
+                    collide(protoEnemy, daMissiles[i]);
                 }
-                else {
-                    delete daMissiles[i];
+                else {;
                     daMissiles.erase(daMissiles.begin()+i);
                 }
             }
