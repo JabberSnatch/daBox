@@ -103,6 +103,10 @@ void updateBox (BoxLogic & daBox) {
     daBox.hitBox.y = daBox.outRect.y+1;
 }
 
+void updateEnemy(BoxLogic& enemy, BoxLogic& target) {
+    // TODO(Samu#1#): Use pythagora and thales to find the delta X and Y of the enemy
+}
+
 void setDirectionsTowards(BoxLogic& daBox, BoxLogic& target) {
     if (daBox.xPosition < target.xPosition) {
         daBox.directions[1] = 1;
