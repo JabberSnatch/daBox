@@ -1,5 +1,7 @@
 #include <iostream>
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #include <math.h>
 #include <vector>
 
@@ -72,7 +74,7 @@ int main(int argc, char **argv) {
     vector<MissileLogic> daMissiles;
     vector<BoxLogic> daEnemies;
 
-    for (int i = 0; i < 20; i++) {
+    for (int i = 0; i < 50; i++) {
         daEnemies.push_back(spawnEnemy(enemySprite));
     }
 
@@ -187,8 +189,9 @@ int main(int argc, char **argv) {
 
             for (unsigned int i = 0; i < daEnemies.size(); i++) {
                 if (daEnemies[i].alive) {
-                    setDirectionsTowards(daEnemies[i], daBox);
-                    updateBox(daEnemies[i]);
+                    //setDirectionsTowards(daEnemies[i], daBox);
+                    //updateBox(daEnemies[i]);
+                    updateEnemy(daEnemies[i], daBox);
                 }
                 else {
                     daEnemies.erase(daEnemies.begin()+i);

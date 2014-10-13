@@ -1,6 +1,7 @@
 #include "BoxLogic.h"
 
 #include <math.h>
+#include <stdlib.h>
 #include <iostream>
 
 #include "GlobalConstants.h"
@@ -105,6 +106,25 @@ void updateBox (BoxLogic & daBox) {
 
 void updateEnemy(BoxLogic& enemy, BoxLogic& target) {
     // TODO(Samu#1#): Use pythagora and thales to find the delta X and Y of the enemy
+
+    double a = target.xPosition - enemy.xPosition;
+    double b = target.yPosition - enemy.yPosition;
+    double c = sqrt(pow(a, 2.0f)+pow(b, 2.0f)); // Distance from target
+    double coeff = enemy.maxVelocity / c;
+
+    enemy.xVelocity = a * coeff;
+    enemy.yVelocity = b * coeff;
+
+    // At last apply the velocity vector to the position
+    enemy.xPosition += enemy.xVelocity;
+    enemy.yPosition += enemy.yVelocity;
+
+// Convert the precise position into pixels position
+    enemy.outRect.x = (int) floor(enemy.xPosition + 0.5f);
+    enemy.outRect.y = (int) floor(enemy.yPosition + 0.5f);
+    enemy.hitBox.x = enemy.outRect.x+1;
+    enemy.hitBox.y = enemy.outRect.y+1;
+
 }
 
 void setDirectionsTowards(BoxLogic& daBox, BoxLogic& target) {
