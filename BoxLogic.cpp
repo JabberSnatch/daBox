@@ -143,6 +143,32 @@ MissileLogic fireMissile (BoxLogic& launcher, SDL_Texture* missileSprite) {
     return newMissile;
 }
 
+BoxLogic spawnEnemy(SDL_Texture* enemySprite) {
+    BoxLogic newEnemy;
+
+    int direction = rand() % 4;
+    double randX = rand() % SCREEN_WIDTH;
+    double randY = rand() % SCREEN_HEIGHT;
+    switch (direction) {
+    case 0: // NORTH
+        randY = -20;
+        break;
+    case 1: // EAST
+        randX = SCREEN_WIDTH + 20;
+        break;
+    case 2: // SOUTH
+        randY = SCREEN_HEIGHT + 20;
+        break;
+    case 3: // WEST
+        randX = -20;
+        break;
+    }
+
+    initBox(newEnemy, enemySprite, randX, randY);
+
+    return newEnemy;
+}
+
 // Should collide update the entities or should it simply return a boolean ?
 // Let's try updating entities
 bool collide (BoxLogic& daBox, MissileLogic& missile) {

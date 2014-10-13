@@ -32,8 +32,8 @@ void initMissile (MissileLogic& missile, SDL_Texture* sprite, int orientation, d
     missile.hitBox.x = missile.outRect.x+(missile.outRect.w - missile.hitBox.w)/2;
     missile.hitBox.y = missile.outRect.y+(missile.outRect.h - missile.hitBox.h)/2;
 
-    std::cout << missile.hitBox.w << "; " << missile.hitBox.h << "; " << missile.hitBox.x << "; " << missile.hitBox.y << std::endl;
-    std::cout << missile.outRect.w << "; " << missile.outRect.h << "; " << missile.outRect.x << "; " << missile.outRect.y << std::endl;
+    //std::cout << missile.hitBox.w << "; " << missile.hitBox.h << "; " << missile.hitBox.x << "; " << missile.hitBox.y << std::endl;
+    //std::cout << missile.outRect.w << "; " << missile.outRect.h << "; " << missile.outRect.x << "; " << missile.outRect.y << std::endl;
 }
 
 void updateMissile (MissileLogic& missile) {

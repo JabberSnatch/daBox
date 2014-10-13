@@ -15,6 +15,8 @@ using namespace std;
 
 int main(int argc, char **argv) {
 
+    srand(time(NULL));
+
 /// SDL INIT
     SDL_Window *window;
     SDL_Surface *screen;
@@ -68,12 +70,17 @@ int main(int argc, char **argv) {
 /// RESOURCES INIT
 
     vector<MissileLogic> daMissiles;
+    vector<BoxLogic> daEnemies;
+
+    for (int i = 0; i < 50; i++) {
+        daEnemies.push_back(spawnEnemy(enemySprite));
+    }
 
     BoxLogic daBox;
     initBox (daBox, boxSprite);
 
-    BoxLogic protoEnemy;
-    initBox (protoEnemy, enemySprite, daBox.xPosition-7, 0);
+    //BoxLogic protoEnemy;
+    //initBox (protoEnemy, enemySprite, daBox.xPosition-7, 0);
 
     unsigned int lastShootDate = 0;
     bool firing = false;
@@ -178,15 +185,29 @@ int main(int argc, char **argv) {
 
             updateBox(daBox);
 
-            setDirectionsTowards(protoEnemy, daBox);
-            updateBox(protoEnemy);
+            for (unsigned int i = 0; i < daEnemies.size(); i++) {
+                if (daEnemies[i].alive) {
+                    setDirectionsTowards(daEnemies[i], daBox);
+                    updateBox(daEnemies[i]);
+                }
+                else {
+                    daEnemies.erase(daEnemies.begin()+i);
+                }
+            }
+            //setDirectionsTowards(protoEnemy, daBox);
+            //updateBox(protoEnemy);
 
             for (unsigned int i = 0; i < daMissiles.size(); i++) {
                 if (daMissiles[i].alive) {
                     updateMissile(daMissiles[i]);
-                    collide(protoEnemy, daMissiles[i]);
+                    //collide(protoEnemy, daMissiles[i]);
+                    unsigned int j = 0;
+                    while(j < daEnemies.size() && daMissiles[i].alive) {
+                        collide(daEnemies[j], daMissiles[i]);
+                        j++;
+                    }
                 }
-                else {;
+                else {
                     daMissiles.erase(daMissiles.begin()+i);
                 }
             }
@@ -202,8 +223,10 @@ int main(int argc, char **argv) {
 
         for (unsigned int i = 0; i < daMissiles.size(); i++)
             renderMissile(renderer, daMissiles[i]);
+        for (unsigned int i = 0; i < daEnemies.size(); i++)
+            renderBox(renderer, daEnemies[i]);
+        //renderBox(renderer, protoEnemy);
         renderBox(renderer, daBox);
-        renderBox(renderer, protoEnemy);
 
         SDL_UpdateWindowSurface(window);
     }
