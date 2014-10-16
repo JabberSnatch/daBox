@@ -7,6 +7,7 @@
 
 #include "SDL.h"
 #include "BoxLogic.h"
+#include "EnemyLogic.h"
 #include "MissileLogic.h"
 #include "GlobalConstants.h"
 
@@ -72,7 +73,7 @@ int main(int argc, char **argv) {
 /// RESOURCES INIT
 
     vector<MissileLogic> daMissiles;
-    vector<BoxLogic> daEnemies;
+    vector<EnemyLogic> daEnemies;
 
     for (int i = 0; i < 50; i++) {
         daEnemies.push_back(spawnEnemy(enemySprite));
@@ -227,7 +228,7 @@ int main(int argc, char **argv) {
         for (unsigned int i = 0; i < daMissiles.size(); i++)
             renderMissile(renderer, daMissiles[i]);
         for (unsigned int i = 0; i < daEnemies.size(); i++)
-            renderBox(renderer, daEnemies[i]);
+            renderEnemy(renderer, daEnemies[i]);
         //renderBox(renderer, protoEnemy);
         renderBox(renderer, daBox);
 

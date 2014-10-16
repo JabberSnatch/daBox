@@ -6,12 +6,7 @@
 
 #include "GlobalConstants.h"
 
-void initBox (BoxLogic & daBox, SDL_Texture * sprite) {
-    initBox(daBox, sprite, (SCREEN_WIDTH-16)/2, (SCREEN_HEIGHT-16)/2);
-    daBox.maxVelocity = MAX_SPEED;
-}
-
-void initBox (BoxLogic& daBox, SDL_Texture* sprite, double x, double y) {
+void initBox (BoxLogic& daBox, SDL_Texture* sprite) {
     daBox.sprite = sprite;
 
     daBox.alive = true;
@@ -23,8 +18,8 @@ void initBox (BoxLogic& daBox, SDL_Texture* sprite, double x, double y) {
     daBox.xVelocity = daBox.yVelocity = 0;
 
     daBox.outRect.h = daBox.outRect.w = daBox.inRect.h = daBox.inRect.w = 16;
-    daBox.xPosition = x;
-    daBox.yPosition = y;
+    daBox.xPosition = (SCREEN_WIDTH-16)/2;
+    daBox.yPosition = (SCREEN_HEIGHT-16)/2;
     daBox.outRect.x = (int) floor(daBox.xPosition + 0.5f);
     daBox.outRect.y = (int) floor(daBox.yPosition + 0.5f);
     daBox.inRect.x = daBox.inRect.y = 0;
@@ -34,7 +29,7 @@ void initBox (BoxLogic& daBox, SDL_Texture* sprite, double x, double y) {
     daBox.hitBox.x = daBox.outRect.x+1;
     daBox.hitBox.y = daBox.outRect.y+1;
 
-    daBox.maxVelocity = ENEMY_MAX_SPEED;
+    daBox.maxVelocity = MAX_SPEED;
 
     //std::cout << daBox.hitBox.h << "; " << daBox.hitBox.w << "; " << daBox.hitBox.x << "; " << daBox.hitBox.y << std::endl;
     //std::cout << daBox.outRect.h << "; " << daBox.outRect.w << "; " << daBox.outRect.x << "; " << daBox.outRect.y << std::endl;
@@ -104,55 +99,6 @@ void updateBox (BoxLogic & daBox) {
     daBox.hitBox.y = daBox.outRect.y+1;
 }
 
-void updateEnemy(BoxLogic& enemy, BoxLogic& target) {
-
-    double a = target.xPosition - enemy.xPosition;
-    double b = target.yPosition - enemy.yPosition;
-    double c = sqrt(pow(a, 2.0f)+pow(b, 2.0f)); // Distance from target
-    double coeff = enemy.maxVelocity / c;
-
-    enemy.xVelocity = a * coeff;
-    enemy.yVelocity = b * coeff;
-
-    enemy.xPosition += enemy.xVelocity;
-    enemy.yPosition += enemy.yVelocity;
-
-// Convert the precise position into pixels position
-    enemy.outRect.x = (int) floor(enemy.xPosition + 0.5f);
-    enemy.outRect.y = (int) floor(enemy.yPosition + 0.5f);
-    enemy.hitBox.x = enemy.outRect.x+1;
-    enemy.hitBox.y = enemy.outRect.y+1;
-
-}
-
-void setDirectionsTowards(BoxLogic& daBox, BoxLogic& target) {
-    if (daBox.xPosition < target.xPosition) {
-        daBox.directions[1] = 1;
-        daBox.directions[3] = 0;
-    }
-    else if (daBox.xPosition > target.xPosition) {
-        daBox.directions[3] = 1;
-        daBox.directions[1] = 0;
-    }
-    else {
-        daBox.directions[1] = 0;
-        daBox.directions[3] = 0;
-    }
-
-    if (daBox.yPosition < target.yPosition) {
-        daBox.directions[2] = 1;
-        daBox.directions[0] = 0;
-    }
-    else if (daBox.yPosition > target.yPosition) {
-        daBox.directions[0] = 1;
-        daBox.directions[2] = 0;
-    }
-    else {
-        daBox.directions[0] = 0;
-        daBox.directions[2] = 0;
-    }
-}
-
 void renderBox (SDL_Renderer* renderer, BoxLogic & daBox) {
     SDL_RenderCopy(renderer, daBox.sprite, &daBox.inRect, &daBox.outRect);
 }
@@ -163,45 +109,4 @@ MissileLogic fireMissile (BoxLogic& launcher, SDL_Texture* missileSprite) {
     initMissile(newMissile, missileSprite, launcher.orientation, launcher.xPosition, launcher.yPosition);
 
     return newMissile;
-}
-
-BoxLogic spawnEnemy(SDL_Texture* enemySprite) {
-    BoxLogic newEnemy;
-
-    int direction = rand() % 4;
-    double randX = rand() % SCREEN_WIDTH;
-    double randY = rand() % SCREEN_HEIGHT;
-    switch (direction) {
-    case 0: // NORTH
-        randY = -20;
-        break;
-    case 1: // EAST
-        randX = SCREEN_WIDTH + 20;
-        break;
-    case 2: // SOUTH
-        randY = SCREEN_HEIGHT + 20;
-        break;
-    case 3: // WEST
-        randX = -20;
-        break;
-    }
-
-    initBox(newEnemy, enemySprite, randX, randY);
-
-    return newEnemy;
-}
-
-// Should collide update the entities or should it simply return a boolean ?
-// Let's try updating entities
-bool collide (BoxLogic& daBox, MissileLogic& missile) {
-    bool collide = false;
-
-    if (SDL_HasIntersection(&daBox.hitBox, &missile.hitBox)) {
-        collide = true;
-        daBox.alive = false;
-        missile.alive = false;
-        std::cout << "HIT !" << std::endl;
-    }
-
-    return collide;
 }
