@@ -33,6 +33,8 @@
 		</Compiler>
 		<Unit filename="BoxLogic.cpp" />
 		<Unit filename="BoxLogic.h" />
+		<Unit filename="EnemyLogic.cpp" />
+		<Unit filename="EnemyLogic.h" />
 		<Unit filename="GlobalConstants.h" />
 		<Unit filename="MissileLogic.cpp" />
 		<Unit filename="MissileLogic.h" />
