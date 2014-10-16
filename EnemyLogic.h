@@ -29,5 +29,8 @@ void renderEnemy (SDL_Renderer* renderer, EnemyLogic& enemy);
 EnemyLogic spawnEnemy(SDL_Texture* sprite);
 
 bool collide (EnemyLogic& enemy, MissileLogic& missile);
+bool collide (EnemyLogic& A, EnemyLogic& B);
+
+void updateOutRect (EnemyLogic& enemy);
 
 #endif // ENEMYLOGIC_H_INCLUDED

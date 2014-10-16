@@ -42,10 +42,7 @@ void updateEnemy(EnemyLogic& enemy, BoxLogic& target) {
     enemy.yPosition += enemy.yVelocity;
 
 // Convert the precise position into pixels position
-    enemy.outRect.x = (int) floor(enemy.xPosition + 0.5f);
-    enemy.outRect.y = (int) floor(enemy.yPosition + 0.5f);
-    enemy.hitBox.x = enemy.outRect.x+1;
-    enemy.hitBox.y = enemy.outRect.y+1;
+    updateOutRect(enemy);
 
 }
 
@@ -92,4 +89,37 @@ bool collide (EnemyLogic& enemy, MissileLogic& missile) {
     }
 
     return collide;
+}
+
+bool collide (EnemyLogic& A, EnemyLogic& B) {
+    bool collide = false;
+
+    if (SDL_HasIntersection(&A.hitBox, &B.hitBox)) {
+        collide = true;
+        if (A.xPosition > B.xPosition) {
+            A.xPosition += ENEMY_MAX_SPEED/2;
+        }
+        else if (A.xPosition < B.xPosition){
+            A.xPosition -= ENEMY_MAX_SPEED/2;
+        }
+
+        if (A.yPosition > B.yPosition) {
+            A.yPosition += ENEMY_MAX_SPEED/2;
+        }
+        else if (A.yPosition < B.yPosition) {
+            A.yPosition -= ENEMY_MAX_SPEED/2;
+        }
+    }
+
+    updateOutRect(A);
+    updateOutRect(B);
+
+    return collide;
+}
+
+void updateOutRect(EnemyLogic& enemy){
+    enemy.outRect.x = (int) floor(enemy.xPosition + 0.5f);
+    enemy.outRect.y = (int) floor(enemy.yPosition + 0.5f);
+    enemy.hitBox.x = enemy.outRect.x+1;
+    enemy.hitBox.y = enemy.outRect.y+1;
 }

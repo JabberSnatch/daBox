@@ -190,9 +190,12 @@ int main(int argc, char **argv) {
 
             for (unsigned int i = 0; i < daEnemies.size(); i++) {
                 if (daEnemies[i].alive) {
-                    //setDirectionsTowards(daEnemies[i], daBox);
-                    //updateBox(daEnemies[i]);
                     updateEnemy(daEnemies[i], daBox);
+                    for (unsigned int j = 0; j < daEnemies.size(); j++) {
+                        if (i != j) {
+                            collide(daEnemies[i], daEnemies[j]);
+                        }
+                    }
                 }
                 else {
                     daEnemies.erase(daEnemies.begin()+i);
