@@ -75,18 +75,13 @@ int main(int argc, char **argv) {
     vector<MissileLogic> daMissiles;
     vector<EnemyLogic> daEnemies;
 
-    for (int i = 0; i < 50; i++) {
-        daEnemies.push_back(spawnEnemy(enemySprite));
-    }
-
     BoxLogic daBox;
     initBox (daBox, boxSprite);
 
-    //BoxLogic protoEnemy;
-    //initBox (protoEnemy, enemySprite, daBox.xPosition-7, 0);
-
     unsigned int lastShootDate = 0;
     bool firing = false;
+
+    unsigned int lastSpawnDate = 0;
 
 
 /// GAME LOOP INIT
@@ -184,6 +179,12 @@ int main(int argc, char **argv) {
             daMissiles.push_back(fireMissile(daBox, missileSprite));
             lastShootDate = SDL_GetTicks();
         }
+
+        if (lastSpawnDate + SPAWNING_DELAY < SDL_GetTicks()) {
+            spawnPack(enemySprite, daEnemies);
+            lastSpawnDate = SDL_GetTicks();
+        }
+
         while(lag >= SCREEN_TPF) {
 
             updateBox(daBox);
@@ -196,18 +197,16 @@ int main(int argc, char **argv) {
                             collide(daEnemies[i], daEnemies[j]);
                         }
                     }
+                    collide(daBox, daEnemies[i]);
                 }
                 else {
                     daEnemies.erase(daEnemies.begin()+i);
                 }
             }
-            //setDirectionsTowards(protoEnemy, daBox);
-            //updateBox(protoEnemy);
 
             for (unsigned int i = 0; i < daMissiles.size(); i++) {
                 if (daMissiles[i].alive) {
-                    updateMissile(daMissiles[i]);
-                    //collide(protoEnemy, daMissiles[i]);
+                    updateMissile(daMissiles[i]);;
                     unsigned int j = 0;
                     while(j < daEnemies.size() && daMissiles[i].alive) {
                         collide(daEnemies[j], daMissiles[i]);
@@ -223,6 +222,10 @@ int main(int argc, char **argv) {
             lag -= SCREEN_TPF;
         }
 
+        if (!daBox.alive) {
+            //Switch to gameover state
+        }
+
 /// RENDER
 
         //cout << daBox.xVelocity << "; " << daBox.yVelocity << endl;
@@ -232,16 +235,20 @@ int main(int argc, char **argv) {
             renderMissile(renderer, daMissiles[i]);
         for (unsigned int i = 0; i < daEnemies.size(); i++)
             renderEnemy(renderer, daEnemies[i]);
-        //renderBox(renderer, protoEnemy);
         renderBox(renderer, daBox);
 
         SDL_UpdateWindowSurface(window);
     }
 
     SDL_DestroyTexture(boxSprite);
-    boxSprite = NULL;
     SDL_DestroyTexture(missileSprite);
+    SDL_DestroyTexture(enemySprite);
+
+    boxSprite = NULL;
     missileSprite = NULL;
+    enemySprite = NULL;
+
+
     SDL_DestroyRenderer(renderer);
     renderer = NULL;
     SDL_DestroyWindow(window);

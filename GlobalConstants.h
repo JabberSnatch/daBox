@@ -15,6 +15,8 @@ const double FRICTION = 0.15f;
 const double MISSILE_SPEED = 6.0f;
 const unsigned int FIRING_DELAY = 100; // Time between each missile, in ms
 
+const unsigned int SPAWNING_DELAY = 2000;
+
 const double PRECISION = 0.1f;
 
 #endif // GLOBALCONSTANTS_H_INCLUDED

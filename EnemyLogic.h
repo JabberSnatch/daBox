@@ -2,6 +2,7 @@
 #define ENEMYLOGIC_H_INCLUDED
 
 #include "SDL.h"
+#include <vector>
 
 #include "MissileLogic.h"
 #include "BoxLogic.h"
@@ -27,6 +28,7 @@ void updateEnemy (EnemyLogic& enemy, BoxLogic& target); // What would be really 
 void renderEnemy (SDL_Renderer* renderer, EnemyLogic& enemy);
 
 EnemyLogic spawnEnemy(SDL_Texture* sprite);
+void spawnPack(SDL_Texture* sprite, std::vector<EnemyLogic>& enemies);
 
 bool collide (EnemyLogic& enemy, MissileLogic& missile);
 bool collide (EnemyLogic& A, EnemyLogic& B);

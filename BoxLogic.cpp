@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include "GlobalConstants.h"
+#include "EnemyLogic.h"
 
 void initBox (BoxLogic& daBox, SDL_Texture* sprite) {
     daBox.sprite = sprite;
@@ -109,4 +110,15 @@ MissileLogic fireMissile (BoxLogic& launcher, SDL_Texture* missileSprite) {
     initMissile(newMissile, missileSprite, launcher.orientation, launcher.xPosition, launcher.yPosition);
 
     return newMissile;
+}
+
+bool collide(BoxLogic& daBox, EnemyLogic& enemy) {
+    bool collide = false;
+
+    if (SDL_HasIntersection(&daBox.hitBox, &enemy.hitBox)) {
+        collide = true;
+        daBox.alive = false;
+    }
+
+    return collide;
 }

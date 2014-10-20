@@ -76,6 +76,40 @@ EnemyLogic spawnEnemy(SDL_Texture* enemySprite) {
     return newEnemy;
 }
 
+void spawnPack(SDL_Texture* enemySprite, std::vector<EnemyLogic>& enemies) {
+    int side = rand() % 4;
+    int offset = 60;
+    double randX = rand() % SCREEN_WIDTH;
+    double randY = rand() % SCREEN_HEIGHT;
+
+    switch (side) {
+    case 0: // NORTH
+        randY = -offset;
+        break;
+    case 1: // EAST
+        randX = SCREEN_WIDTH + offset;
+        break;
+    case 2: // SOUTH
+        randY = SCREEN_HEIGHT + offset;
+        break;
+    case 3: // WEST
+        randX = -offset;
+        break;
+    }
+
+    int enemiesToSpawn = rand() % 20;
+    int range = enemiesToSpawn * 2 + 19;
+    EnemyLogic newEnemy;
+
+    std::cout << enemiesToSpawn << std::endl;
+
+    for (int i = 0; i < enemiesToSpawn; i++){
+        initEnemy(newEnemy, enemySprite, randX+rand()%(range*2)-range, randY+rand()%(range*2)-range);
+        //initEnemy(newEnemy, enemySprite, randX, randY);
+        enemies.push_back(newEnemy);
+    }
+}
+
 // Should collide update the entities or should it simply return a boolean ?
 // Let's try updating entities
 bool collide (EnemyLogic& enemy, MissileLogic& missile) {

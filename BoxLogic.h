@@ -5,6 +5,8 @@
 
 #include "MissileLogic.h"
 
+struct EnemyLogic;
+
 struct BoxLogic {
     SDL_Texture * sprite;
 
@@ -28,5 +30,7 @@ void updateBox (BoxLogic & daBox);
 void renderBox (SDL_Renderer* renderer, BoxLogic & daBox);
 
 MissileLogic fireMissile (BoxLogic& launcher, SDL_Texture* missileSprite);
+
+bool collide(BoxLogic& daBox, EnemyLogic& enemy);
 
 #endif // BOXLOGIC_H_INCLUDED
