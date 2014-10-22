@@ -31,14 +31,19 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="BlastLogic.cpp" />
+		<Unit filename="BlastLogic.h" />
 		<Unit filename="BoxLogic.cpp" />
 		<Unit filename="BoxLogic.h" />
 		<Unit filename="EnemyLogic.cpp" />
 		<Unit filename="EnemyLogic.h" />
+		<Unit filename="GameVariables.h" />
 		<Unit filename="GlobalConstants.h" />
 		<Unit filename="MissileLogic.cpp" />
 		<Unit filename="MissileLogic.h" />
+		<Unit filename="coreState.cpp" />
 		<Unit filename="daBox.cpp" />
+		<Unit filename="stateFunctions.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />
