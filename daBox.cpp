@@ -11,6 +11,8 @@
 #include "MissileLogic.h"
 #include "BlastLogic.h"
 #include "GlobalConstants.h"
+#include "GameVariables.h"
+#include "stateFunctions.h"
 
 using namespace std;
 
@@ -34,9 +36,6 @@ int main(int argc, char **argv) {
     srand(time(NULL));
 
 /// SDL INIT
-    SDL_Window *window;
-    SDL_Surface *screen;
-    SDL_Renderer *renderer;
 
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "SDL_Init fail : %s\n", SDL_GetError());
@@ -53,31 +52,25 @@ int main(int argc, char **argv) {
     renderer = SDL_CreateSoftwareRenderer(screen);
 
 /// Sprites loading
-    SDL_Texture* boxSprite = loadBitmap("assets/daBox.bmp", renderer);
-    SDL_Texture* missileSprite = loadBitmap("assets/missile.bmp", renderer);
-    SDL_Texture* enemySprite = loadBitmap("assets/evilBox.bmp", renderer);
-    SDL_Texture* blastSprite = loadBitmap("assets/blast.bmp", renderer);
+    boxSprite = loadBitmap("assets/daBox.bmp", renderer);
+    missileSprite = loadBitmap("assets/missile.bmp", renderer);
+    enemySprite = loadBitmap("assets/evilBox.bmp", renderer);
+    blastSprite = loadBitmap("assets/blast.bmp", renderer);
 
 /// RESOURCES INIT
 
-    vector<MissileLogic> daMissiles;
-    vector<EnemyLogic> daEnemies;
-    vector<BlastLogic> daBlasts;
-
-    BoxLogic daBox;
     initBox (daBox, boxSprite);
 
-    unsigned int lastShootDate = 0;
-    bool firing = false;
+    lastShootDate = 0;
+    firing = false;
+    lastSpawnDate = 0;
 
-    unsigned int lastSpawnDate = 0;
+    running = true;
+    // FPS capping variables
+    lastTime = SDL_GetTicks();
+    lag = 0;
 
-
-/// GAME LOOP INIT
-
-    bool running = true;
-    SDL_Event e;
-    unsigned int lastTime = SDL_GetTicks(), currentTime, lag(0), elapsed; // FPS capping variables
+/// GAME LOOP
 
     while (running) {
 
@@ -87,171 +80,14 @@ int main(int argc, char **argv) {
         lag += elapsed;
 
         //cout << currentTime << "; " << elapsed << "; " << lag << endl;
-
-/// HANDLE INPUTS
-
-        SDL_PollEvent(&e);
-        //cout << "Polling event.." << endl;
-
-        if (e.type == SDL_QUIT) {
-            running = false;
-        }
-        if (e.type == SDL_KEYDOWN) {
-            switch (e.key.keysym.sym) {
-
-            case SDLK_z:
-                daBox.directions[0] = 1;
-                break;
-            case SDLK_d:
-                daBox.directions[1] = 1;
-                break;
-            case SDLK_s:
-                daBox.directions[2] = 1;
-                break;
-            case SDLK_q:
-                daBox.directions[3] = 1;
-                break;
-
-            case SDLK_UP:
-                //cout << "UPd; ";
-                daBox.orientation = 0;
-                break;
-            case SDLK_RIGHT:
-                //cout << "RIGHTd; ";
-                daBox.orientation = 1;
-                break;
-            case SDLK_DOWN:
-                //cout << "DOWNd; ";
-                daBox.orientation = 2;
-                break;
-            case SDLK_LEFT:
-                //cout << "LEFTd; ";
-                daBox.orientation = 3;
-                break;
-
-            case SDLK_SPACE:
-                firing = true;
-                break;
-
-            case SDLK_ESCAPE:
-                running = false;
-                break;
-            }
-        }
-        if (e.type == SDL_KEYUP) {
-            switch (e.key.keysym.sym) {
-            case SDLK_z:
-                //cout << "UPu; ";
-                daBox.directions[0] = 0;
-                break;
-            case SDLK_d:
-                //cout << "RIGHTu; ";
-                daBox.directions[1] = 0;
-                break;
-            case SDLK_s:
-                //cout << "DOWNu; ";
-                daBox.directions[2] = 0;
-                break;
-            case SDLK_q:
-                //cout << "LEFTu; ";
-                daBox.directions[3] = 0;
-                break;
-
-            case SDLK_SPACE:
-                firing = false;
-                break;
-            }
+        switch (gameState) {
+        case 0:
+            gameState = coreState();
         }
 
-/// UPDATE
-        if (firing && lastShootDate + FIRING_DELAY < SDL_GetTicks()) {
-            daMissiles.push_back(fireMissile(daBox, missileSprite));
-            lastShootDate = SDL_GetTicks();
-        }
-
-        if (lastSpawnDate + SPAWNING_DELAY < SDL_GetTicks()) {
-            spawnPack(enemySprite, daEnemies);
-            lastSpawnDate = SDL_GetTicks();
-        }
-
-        while(lag >= SCREEN_TPF) {
-
-            updateBox(daBox);
-
-            /// Blasts update
-            for (unsigned int i = 0; i < daBlasts.size(); i++) {
-                if (daBlasts[i].alive) {
-                    updateBlast(daBlasts[i]);
-                }
-                else {
-                    daBlasts.erase(daBlasts.begin()+i);
-                }
-
-            }
-
-            /// Missiles update
-            for (unsigned int i = 0; i < daMissiles.size(); i++) {
-
-                if (daMissiles[i].alive) {
-                    updateMissile(daMissiles[i]);;
-                    unsigned int j = 0;
-                    while(j < daEnemies.size() && daMissiles[i].alive) {
-                        if (collide(daEnemies[j], daMissiles[i])) {
-                            BlastLogic blast;
-                            initBlast(blast, blastSprite, daEnemies[j].xPosition, daEnemies[j].yPosition);
-                            daBlasts.push_back(blast);
-                        }
-                        j++;
-                    }
-                }
-
-                else {
-                    daMissiles.erase(daMissiles.begin()+i);
-                }
-            }
-
-            /// Enemies update
-            for (unsigned int i = 0; i < daEnemies.size(); i++) {
-
-                if (daEnemies[i].alive) {
-                    updateEnemy(daEnemies[i], daBox);
-                    for (unsigned int j = i+1; j < daEnemies.size(); j++) {
-                        if (i != j) {
-                            collide(daEnemies[i], daEnemies[j]);
-                        }
-                    }
-                    collide(daBox, daEnemies[i]);
-                }
-
-                else {
-                    daEnemies.erase(daEnemies.begin()+i);
-                }
-            }
-
-
-        // ..Aaaaand update the lag counter
-            lag -= SCREEN_TPF;
-        }
-
-        if (!daBox.alive) {
-            //Switch to gameover state
-        }
-
-/// RENDER
-
-        //cout << daBox.xVelocity << "; " << daBox.yVelocity << endl;
-        SDL_RenderClear(renderer);
-
-        for (unsigned int i = 0; i < daMissiles.size(); i++)
-            renderMissile(renderer, daMissiles[i]);
-        for (unsigned int i = 0; i < daEnemies.size(); i++)
-            renderEnemy(renderer, daEnemies[i]);
-        for (unsigned int i = 0; i < daBlasts.size(); i++)
-            renderBlast(renderer, daBlasts[i]);
-        renderBox(renderer, daBox);
-
-        SDL_UpdateWindowSurface(window);
     }
+
+/// END OF GAME LOOP
 
     SDL_DestroyTexture(boxSprite);
     SDL_DestroyTexture(missileSprite);

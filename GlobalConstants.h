@@ -19,4 +19,8 @@ const unsigned int SPAWNING_DELAY = 2000;
 
 const double PRECISION = 0.1f;
 
+const int CORE_STATE = 0;
+const int TITLE_STATE = 1;
+const int GAMEOVER_STATE = 2;
+
 #endif // GLOBALCONSTANTS_H_INCLUDED

@@ -33,6 +33,6 @@ void spawnPack(SDL_Texture* sprite, std::vector<EnemyLogic>& enemies);
 bool collide (EnemyLogic& enemy, MissileLogic& missile);
 bool collide (EnemyLogic& A, EnemyLogic& B);
 
-void updateOutRect (EnemyLogic& enemy);
+void updateOutRect (EnemyLogic& enemy); // Converts float x and y to integers
 
 #endif // ENEMYLOGIC_H_INCLUDED
