@@ -14,9 +14,9 @@ void initBlast(BlastLogic& blast, SDL_Texture* sprite, double x, double y) {
 }
 
 void updateBlast(BlastLogic& blast) {
-    if (blast.currentFrame < 7) {
+    if (blast.currentFrame < 15) {
         blast.currentFrame++;
-        blast.inRect.y = blast.currentFrame * blast.inRect.h;
+        blast.inRect.y = blast.currentFrame/2 * blast.inRect.h;
     }
     else {
         blast.alive = false;
