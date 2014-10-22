@@ -43,7 +43,7 @@ int coreState(Game& game) {
             break;
 
         case SDLK_SPACE:
-            game.firing = true;
+            game.daBox.firing = true;
             break;
 
         case SDLK_ESCAPE:
@@ -71,15 +71,15 @@ int coreState(Game& game) {
             break;
 
         case SDLK_SPACE:
-            game.firing = false;
+            game.daBox.firing = false;
             break;
         }
     }
 
 /// UPDATE
-    if (game.firing && game.lastShootDate + FIRING_DELAY < SDL_GetTicks()) {
+    if (game.daBox.firing && game.daBox.lastShootDate + FIRING_DELAY < SDL_GetTicks()) {
         game.daMissiles.push_back(fireMissile(game.daBox, game.missileSprite));
-        game.lastShootDate = SDL_GetTicks();
+        game.daBox.lastShootDate = SDL_GetTicks();
     }
 
     if (game.lastSpawnDate + SPAWNING_DELAY < SDL_GetTicks()) {

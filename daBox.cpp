@@ -63,8 +63,6 @@ int main(int argc, char **argv) {
 
     initBox(game.daBox, game.boxSprite);
 
-    game.lastShootDate = 0;
-    game.firing = false;
     game.lastSpawnDate = 0;
 
     game.running = true;
@@ -86,6 +84,7 @@ int main(int argc, char **argv) {
         switch (gameState) {
         case 0:
             gameState = coreState(game);
+            break;
         }
 
     }

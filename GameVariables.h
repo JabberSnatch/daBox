@@ -28,8 +28,6 @@ std::vector<EnemyLogic> daEnemies;
 std::vector<BlastLogic> daBlasts;
 BoxLogic daBox;
 
-unsigned int lastShootDate; //TODO Perhaps lastShootDate should move too
-bool firing; //TODO Move firing to BoxLogic
 unsigned int lastSpawnDate;
 
 bool running;

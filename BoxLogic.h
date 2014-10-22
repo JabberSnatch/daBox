@@ -15,6 +15,9 @@ struct BoxLogic {
     int directions [4];
     int orientation;
 
+    unsigned int lastShootDate;
+    bool firing;
+
     double xPosition, yPosition;
     double xVelocity, yVelocity;
     double maxVelocity;

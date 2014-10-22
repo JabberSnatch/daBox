@@ -16,6 +16,10 @@ void initBox (BoxLogic& daBox, SDL_Texture* sprite) {
         daBox.directions[i] = 0;
     }
     daBox.orientation = 0;
+
+    daBox.lastShootDate = 0;
+    daBox.firing = false;
+
     daBox.xVelocity = daBox.yVelocity = 0;
 
     daBox.outRect.h = daBox.outRect.w = daBox.inRect.h = daBox.inRect.w = 16;
