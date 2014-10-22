@@ -97,11 +97,11 @@ void spawnPack(SDL_Texture* enemySprite, std::vector<EnemyLogic>& enemies) {
         break;
     }
 
-    int enemiesToSpawn = rand() % 20;
+    int enemiesToSpawn = (rand() % 15) + 5;
     int range = enemiesToSpawn * 2 + 19;
     EnemyLogic newEnemy;
 
-    std::cout << enemiesToSpawn << std::endl;
+    //std::cout << enemiesToSpawn << std::endl;
 
     for (int i = 0; i < enemiesToSpawn; i++){
         initEnemy(newEnemy, enemySprite, randX+rand()%(range*2)-range, randY+rand()%(range*2)-range);
@@ -119,7 +119,7 @@ bool collide (EnemyLogic& enemy, MissileLogic& missile) {
         collide = true;
         enemy.alive = false;
         missile.alive = false;
-        std::cout << "HIT !" << std::endl;
+        //std::cout << "HIT !" << std::endl;
     }
 
     return collide;

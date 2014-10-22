@@ -16,11 +16,11 @@ using namespace std;
 
 // TODO (Samu#1#): Add other stuff
 
-SDL_Texture* loadBitmap(string path) {
-    SDL_Surface * tmp = SDL_LoadBMP(path);
+SDL_Texture* loadBitmap(string path, SDL_Renderer* renderer) {
+    SDL_Surface * tmp = SDL_LoadBMP(path.c_str());
     if (!tmp) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Bitmap loading fail : %s\n", SDL_GetError());
-        return 1;
+        return NULL;
     }
     SDL_SetColorKey(tmp, SDL_TRUE, SDL_MapRGB(tmp->format, 255, 0, 255));
     SDL_Texture * bmpTexture = SDL_CreateTextureFromSurface(renderer, tmp);
@@ -53,41 +53,16 @@ int main(int argc, char **argv) {
     renderer = SDL_CreateSoftwareRenderer(screen);
 
 /// Sprites loading
-    /// boxSprite
-    SDL_Surface * tmp = SDL_LoadBMP("assets/daBox.bmp");
-    if (!tmp) {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Bitmap loading fail : %s\n", SDL_GetError());
-        return 1;
-    }
-    SDL_SetColorKey(tmp, SDL_TRUE, SDL_MapRGB(tmp->format, 255, 0, 255));
-    SDL_Texture * boxSprite = SDL_CreateTextureFromSurface(renderer, tmp);
-    SDL_FreeSurface(tmp);
-
-    /// missileSprite
-    tmp = SDL_LoadBMP("assets/missile.bmp");
-    if (!tmp) {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Bitmap loading fail : %s\n", SDL_GetError());
-        return 1;
-    }
-    SDL_SetColorKey(tmp, SDL_TRUE, SDL_MapRGB(tmp->format, 255, 0, 255));
-    SDL_Texture * missileSprite = SDL_CreateTextureFromSurface(renderer, tmp);
-    SDL_FreeSurface(tmp);
-
-    /// enemySprite
-    tmp = SDL_LoadBMP("assets/evilBox.bmp");
-    if (!tmp) {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Bitmap loading fail : %s\n", SDL_GetError());
-        return 1;
-    }
-    SDL_SetColorKey(tmp, SDL_TRUE, SDL_MapRGB(tmp->format, 255, 0, 255));
-    SDL_Texture * enemySprite = SDL_CreateTextureFromSurface(renderer, tmp);
-    SDL_FreeSurface(tmp);
-
+    SDL_Texture* boxSprite = loadBitmap("assets/daBox.bmp", renderer);
+    SDL_Texture* missileSprite = loadBitmap("assets/missile.bmp", renderer);
+    SDL_Texture* enemySprite = loadBitmap("assets/evilBox.bmp", renderer);
+    SDL_Texture* blastSprite = loadBitmap("assets/blast.bmp", renderer);
 
 /// RESOURCES INIT
 
     vector<MissileLogic> daMissiles;
     vector<EnemyLogic> daEnemies;
+    vector<BlastLogic> daBlasts;
 
     BoxLogic daBox;
     initBox (daBox, boxSprite);
@@ -203,34 +178,56 @@ int main(int argc, char **argv) {
 
             updateBox(daBox);
 
+            /// Blasts update
+            for (unsigned int i = 0; i < daBlasts.size(); i++) {
+                if (daBlasts[i].alive) {
+                    updateBlast(daBlasts[i]);
+                }
+                else {
+                    daBlasts.erase(daBlasts.begin()+i);
+                }
+
+            }
+
+            /// Missiles update
+            for (unsigned int i = 0; i < daMissiles.size(); i++) {
+
+                if (daMissiles[i].alive) {
+                    updateMissile(daMissiles[i]);;
+                    unsigned int j = 0;
+                    while(j < daEnemies.size() && daMissiles[i].alive) {
+                        if (collide(daEnemies[j], daMissiles[i])) {
+                            BlastLogic blast;
+                            initBlast(blast, blastSprite, daEnemies[j].xPosition, daEnemies[j].yPosition);
+                            daBlasts.push_back(blast);
+                        }
+                        j++;
+                    }
+                }
+
+                else {
+                    daMissiles.erase(daMissiles.begin()+i);
+                }
+            }
+
+            /// Enemies update
             for (unsigned int i = 0; i < daEnemies.size(); i++) {
+
                 if (daEnemies[i].alive) {
                     updateEnemy(daEnemies[i], daBox);
-                    for (unsigned int j = 0; j < daEnemies.size(); j++) {
+                    for (unsigned int j = i+1; j < daEnemies.size(); j++) {
                         if (i != j) {
                             collide(daEnemies[i], daEnemies[j]);
                         }
                     }
                     collide(daBox, daEnemies[i]);
                 }
+
                 else {
                     daEnemies.erase(daEnemies.begin()+i);
                 }
             }
 
-            for (unsigned int i = 0; i < daMissiles.size(); i++) {
-                if (daMissiles[i].alive) {
-                    updateMissile(daMissiles[i]);;
-                    unsigned int j = 0;
-                    while(j < daEnemies.size() && daMissiles[i].alive) {
-                        collide(daEnemies[j], daMissiles[i]);
-                        j++;
-                    }
-                }
-                else {
-                    daMissiles.erase(daMissiles.begin()+i);
-                }
-            }
 
         // ..Aaaaand update the lag counter
             lag -= SCREEN_TPF;
@@ -249,6 +246,8 @@ int main(int argc, char **argv) {
             renderMissile(renderer, daMissiles[i]);
         for (unsigned int i = 0; i < daEnemies.size(); i++)
             renderEnemy(renderer, daEnemies[i]);
+        for (unsigned int i = 0; i < daBlasts.size(); i++)
+            renderBlast(renderer, daBlasts[i]);
         renderBox(renderer, daBox);
 
         SDL_UpdateWindowSurface(window);
@@ -257,10 +256,12 @@ int main(int argc, char **argv) {
     SDL_DestroyTexture(boxSprite);
     SDL_DestroyTexture(missileSprite);
     SDL_DestroyTexture(enemySprite);
+    SDL_DestroyTexture(blastSprite);
 
     boxSprite = NULL;
     missileSprite = NULL;
     enemySprite = NULL;
+    blastSprite = NULL;
 
 
     SDL_DestroyRenderer(renderer);

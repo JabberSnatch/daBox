@@ -118,6 +118,7 @@ bool collide(BoxLogic& daBox, EnemyLogic& enemy) {
     if (SDL_HasIntersection(&daBox.hitBox, &enemy.hitBox)) {
         collide = true;
         daBox.alive = false;
+        //std::cout << "HIT" << std::endl;
     }
 
     return collide;

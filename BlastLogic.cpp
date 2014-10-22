@@ -19,10 +19,10 @@ void updateBlast(BlastLogic& blast) {
         blast.inRect.y = blast.currentFrame * blast.inRect.h;
     }
     else {
-        alive = false;
+        blast.alive = false;
     }
 }
 
 void renderBlast(SDL_Renderer* renderer, BlastLogic& blast) {
-    SDL_RenderCopy(renderer, blast.sprite, blast.inRect, blast.outRect);
+    SDL_RenderCopy(renderer, blast.sprite, &blast.inRect, &blast.outRect);
 }
