@@ -34,6 +34,8 @@ SDL_Texture* loadBitmap(string path, SDL_Renderer* renderer) {
 int main(int argc, char **argv) {
 
     srand(time(NULL));
+    Game game;
+    int gameState = 0;
 
 /// SDL INIT
 
@@ -42,68 +44,69 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    window = SDL_CreateWindow("daBox", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-    if (!window) {
+    game.window = SDL_CreateWindow("daBox", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+    if (!game.window) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Window creation fail : %s\n", SDL_GetError());
         return 1;
     }
 
-    screen = SDL_GetWindowSurface(window);
-    renderer = SDL_CreateSoftwareRenderer(screen);
+    game.screen = SDL_GetWindowSurface(game.window);
+    game.renderer = SDL_CreateSoftwareRenderer(game.screen);
 
 /// Sprites loading
-    boxSprite = loadBitmap("assets/daBox.bmp", renderer);
-    missileSprite = loadBitmap("assets/missile.bmp", renderer);
-    enemySprite = loadBitmap("assets/evilBox.bmp", renderer);
-    blastSprite = loadBitmap("assets/blast.bmp", renderer);
+    game.boxSprite = loadBitmap("assets/daBox.bmp", game.renderer);
+    game.missileSprite = loadBitmap("assets/missile.bmp", game.renderer);
+    game.enemySprite = loadBitmap("assets/evilBox.bmp", game.renderer);
+    game.blastSprite = loadBitmap("assets/blast.bmp", game.renderer);
 
 /// RESOURCES INIT
 
-    initBox (daBox, boxSprite);
+    initBox(game.daBox, game.boxSprite);
 
-    lastShootDate = 0;
-    firing = false;
-    lastSpawnDate = 0;
+    game.lastShootDate = 0;
+    game.firing = false;
+    game.lastSpawnDate = 0;
 
-    running = true;
+    game.running = true;
     // FPS capping variables
-    lastTime = SDL_GetTicks();
-    lag = 0;
+    game.lastTime = SDL_GetTicks();
+    game.lag = 0;
 
 /// GAME LOOP
 
-    while (running) {
+    while (game.running) {
 
-        currentTime = SDL_GetTicks();
-        elapsed = currentTime - lastTime;
-        lastTime = currentTime;
-        lag += elapsed;
+        game.currentTime = SDL_GetTicks();
+        game.elapsed = game.currentTime - game.lastTime;
+        game.lastTime = game.currentTime;
+        game.lag += game.elapsed;
 
         //cout << currentTime << "; " << elapsed << "; " << lag << endl;
+        SDL_PollEvent(&game.e);
         switch (gameState) {
         case 0:
-            gameState = coreState();
+            gameState = coreState(game);
         }
 
     }
 
 /// END OF GAME LOOP
 
-    SDL_DestroyTexture(boxSprite);
-    SDL_DestroyTexture(missileSprite);
-    SDL_DestroyTexture(enemySprite);
-    SDL_DestroyTexture(blastSprite);
+    SDL_DestroyTexture(game.boxSprite);
+    SDL_DestroyTexture(game.missileSprite);
+    SDL_DestroyTexture(game.enemySprite);
+    SDL_DestroyTexture(game.blastSprite);
 
-    boxSprite = NULL;
-    missileSprite = NULL;
-    enemySprite = NULL;
-    blastSprite = NULL;
+    game.boxSprite = NULL;
+    game.missileSprite = NULL;
+    game.enemySprite = NULL;
+    game.blastSprite = NULL;
 
 
-    SDL_DestroyRenderer(renderer);
-    renderer = NULL;
-    SDL_DestroyWindow(window);
-    window = NULL;
+    SDL_DestroyRenderer(game.renderer);
+    game.renderer = NULL;
+    SDL_DestroyWindow(game.window);
+    game.window = NULL;
 
     SDL_Quit();
 

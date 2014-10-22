@@ -1,172 +1,168 @@
 #include "stateFunctions.h"
 #include "GlobalConstants.h"
-#include "GameVariables.h"
+#include "gameVariables.h"
 
-int coreState() {
+int coreState(Game& game) {
     int nextState = CORE_STATE;
 
 /// HANDLE INPUTS
-
-    SDL_PollEvent(&e);
-    //cout << "Polling event.." << endl;
-
-    if (e.type == SDL_QUIT) {
-        running = false;
+    if (game.e.type == SDL_QUIT) {
+        game.running = false;
     }
-    if (e.type == SDL_KEYDOWN) {
-        switch (e.key.keysym.sym) {
+    if (game.e.type == SDL_KEYDOWN) {
+        switch (game.e.key.keysym.sym) {
 
         case SDLK_z:
-            daBox.directions[0] = 1;
+            game.daBox.directions[0] = 1;
             break;
         case SDLK_d:
-            daBox.directions[1] = 1;
+            game.daBox.directions[1] = 1;
             break;
         case SDLK_s:
-            daBox.directions[2] = 1;
+            game.daBox.directions[2] = 1;
             break;
         case SDLK_q:
-            daBox.directions[3] = 1;
+            game.daBox.directions[3] = 1;
             break;
 
         case SDLK_UP:
             //cout << "UPd; ";
-            daBox.orientation = 0;
+            game.daBox.orientation = 0;
             break;
         case SDLK_RIGHT:
             //cout << "RIGHTd; ";
-            daBox.orientation = 1;
+            game.daBox.orientation = 1;
             break;
         case SDLK_DOWN:
             //cout << "DOWNd; ";
-            daBox.orientation = 2;
+            game.daBox.orientation = 2;
             break;
         case SDLK_LEFT:
             //cout << "LEFTd; ";
-            daBox.orientation = 3;
+            game.daBox.orientation = 3;
             break;
 
         case SDLK_SPACE:
-            firing = true;
+            game.firing = true;
             break;
 
         case SDLK_ESCAPE:
-            running = false;
+            game.running = false;
             break;
         }
     }
-    if (e.type == SDL_KEYUP) {
-        switch (e.key.keysym.sym) {
+    if (game.e.type == SDL_KEYUP) {
+        switch (game.e.key.keysym.sym) {
         case SDLK_z:
             //cout << "UPu; ";
-            daBox.directions[0] = 0;
+            game.daBox.directions[0] = 0;
             break;
         case SDLK_d:
             //cout << "RIGHTu; ";
-            daBox.directions[1] = 0;
+            game.daBox.directions[1] = 0;
             break;
         case SDLK_s:
             //cout << "DOWNu; ";
-            daBox.directions[2] = 0;
+            game.daBox.directions[2] = 0;
             break;
         case SDLK_q:
             //cout << "LEFTu; ";
-            daBox.directions[3] = 0;
+            game.daBox.directions[3] = 0;
             break;
 
         case SDLK_SPACE:
-            firing = false;
+            game.firing = false;
             break;
         }
     }
 
 /// UPDATE
-    if (firing && lastShootDate + FIRING_DELAY < SDL_GetTicks()) {
-        daMissiles.push_back(fireMissile(daBox, missileSprite));
-        lastShootDate = SDL_GetTicks();
+    if (game.firing && game.lastShootDate + FIRING_DELAY < SDL_GetTicks()) {
+        game.daMissiles.push_back(fireMissile(game.daBox, game.missileSprite));
+        game.lastShootDate = SDL_GetTicks();
     }
 
-    if (lastSpawnDate + SPAWNING_DELAY < SDL_GetTicks()) {
-        spawnPack(enemySprite, daEnemies);
-        lastSpawnDate = SDL_GetTicks();
+    if (game.lastSpawnDate + SPAWNING_DELAY < SDL_GetTicks()) {
+        spawnPack(game.enemySprite, game.daEnemies);
+        game.lastSpawnDate = SDL_GetTicks();
     }
 
-    while(lag >= SCREEN_TPF) {
+    while(game.lag >= SCREEN_TPF) {
 
-        updateBox(daBox);
+        updateBox(game.daBox);
 
         /// Blasts update
-        for (unsigned int i = 0; i < daBlasts.size(); i++) {
-            if (daBlasts[i].alive) {
-                updateBlast(daBlasts[i]);
+        for (unsigned int i = 0; i < game.daBlasts.size(); i++) {
+            if (game.daBlasts[i].alive) {
+                updateBlast(game.daBlasts[i]);
             } else {
-                daBlasts.erase(daBlasts.begin()+i);
+                game.daBlasts.erase(game.daBlasts.begin()+i);
             }
 
         }
 
         /// Missiles update
-        for (unsigned int i = 0; i < daMissiles.size(); i++) {
+        for (unsigned int i = 0; i < game.daMissiles.size(); i++) {
 
-            if (daMissiles[i].alive) {
-                updateMissile(daMissiles[i]);;
+            if (game.daMissiles[i].alive) {
+                updateMissile(game.daMissiles[i]);;
                 unsigned int j = 0;
-                while(j < daEnemies.size() && daMissiles[i].alive) {
-                    if (collide(daEnemies[j], daMissiles[i])) {
+                while(j < game.daEnemies.size() && game.daMissiles[i].alive) {
+                    if (collide(game.daEnemies[j], game.daMissiles[i])) {
                         BlastLogic blast;
-                        initBlast(blast, blastSprite, daEnemies[j].xPosition, daEnemies[j].yPosition);
-                        daBlasts.push_back(blast);
+                        initBlast(blast, game.blastSprite, game.daEnemies[j].xPosition, game.daEnemies[j].yPosition);
+                        game.daBlasts.push_back(blast);
                     }
                     j++;
                 }
             }
 
             else {
-                daMissiles.erase(daMissiles.begin()+i);
+                game.daMissiles.erase(game.daMissiles.begin()+i);
             }
         }
 
         /// Enemies update
-        for (unsigned int i = 0; i < daEnemies.size(); i++) {
+        for (unsigned int i = 0; i < game.daEnemies.size(); i++) {
 
-            if (daEnemies[i].alive) {
-                updateEnemy(daEnemies[i], daBox);
-                for (unsigned int j = i+1; j < daEnemies.size(); j++) {
+            if (game.daEnemies[i].alive) {
+                updateEnemy(game.daEnemies[i], game.daBox);
+                for (unsigned int j = i+1; j < game.daEnemies.size(); j++) {
                     if (i != j) {
-                        collide(daEnemies[i], daEnemies[j]);
+                        collide(game.daEnemies[i], game.daEnemies[j]);
                     }
                 }
-                collide(daBox, daEnemies[i]);
+                collide(game.daBox, game.daEnemies[i]);
             }
 
             else {
-                daEnemies.erase(daEnemies.begin()+i);
+                game.daEnemies.erase(game.daEnemies.begin()+i);
             }
         }
 
 
         // ..Aaaaand update the lag counter
-        lag -= SCREEN_TPF;
+        game.lag -= SCREEN_TPF;
     }
 
-    if (!daBox.alive) {
+    if (!game.daBox.alive) {
         //Switch to gameover state
     }
 
 /// RENDER
 
     //cout << daBox.xVelocity << "; " << daBox.yVelocity << endl;
-    SDL_RenderClear(renderer);
+    SDL_RenderClear(game.renderer);
 
-    for (unsigned int i = 0; i < daMissiles.size(); i++)
-        renderMissile(renderer, daMissiles[i]);
-    for (unsigned int i = 0; i < daEnemies.size(); i++)
-        renderEnemy(renderer, daEnemies[i]);
-    for (unsigned int i = 0; i < daBlasts.size(); i++)
-        renderBlast(renderer, daBlasts[i]);
-    renderBox(renderer, daBox);
+    for (unsigned int i = 0; i < game.daMissiles.size(); i++)
+        renderMissile(game.renderer, game.daMissiles[i]);
+    for (unsigned int i = 0; i < game.daEnemies.size(); i++)
+        renderEnemy(game.renderer, game.daEnemies[i]);
+    for (unsigned int i = 0; i < game.daBlasts.size(); i++)
+        renderBlast(game.renderer, game.daBlasts[i]);
+    renderBox(game.renderer, game.daBox);
 
-    SDL_UpdateWindowSurface(window);
+    SDL_UpdateWindowSurface(game.window);
 
     return nextState;
 }

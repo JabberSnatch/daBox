@@ -33,7 +33,6 @@ bool firing; //TODO Move firing to BoxLogic
 unsigned int lastSpawnDate;
 
 bool running;
-int gameState;
 SDL_Event e;
 unsigned int lastTime, currentTime, lag, elapsed; // FPS capping variables
 };
