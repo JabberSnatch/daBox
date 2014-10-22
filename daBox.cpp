@@ -9,12 +9,25 @@
 #include "BoxLogic.h"
 #include "EnemyLogic.h"
 #include "MissileLogic.h"
+#include "BlastLogic.h"
 #include "GlobalConstants.h"
 
 using namespace std;
 
-// TODO (Samu#1#): Add some missiles and ennemies
+// TODO (Samu#1#): Add other stuff
 
+SDL_Texture* loadBitmap(string path) {
+    SDL_Surface * tmp = SDL_LoadBMP(path);
+    if (!tmp) {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Bitmap loading fail : %s\n", SDL_GetError());
+        return 1;
+    }
+    SDL_SetColorKey(tmp, SDL_TRUE, SDL_MapRGB(tmp->format, 255, 0, 255));
+    SDL_Texture * bmpTexture = SDL_CreateTextureFromSurface(renderer, tmp);
+    SDL_FreeSurface(tmp);
+
+    return bmpTexture;
+}
 
 int main(int argc, char **argv) {
 
@@ -69,6 +82,7 @@ int main(int argc, char **argv) {
     SDL_SetColorKey(tmp, SDL_TRUE, SDL_MapRGB(tmp->format, 255, 0, 255));
     SDL_Texture * enemySprite = SDL_CreateTextureFromSurface(renderer, tmp);
     SDL_FreeSurface(tmp);
+
 
 /// RESOURCES INIT
 
