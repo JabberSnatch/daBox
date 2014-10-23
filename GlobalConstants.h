@@ -23,4 +23,6 @@ const int CORE_STATE = 0;
 const int TITLE_STATE = 1;
 const int GAMEOVER_STATE = 2;
 
+const int ENEMIES_CAP = 325;
+
 #endif // GLOBALCONSTANTS_H_INCLUDED

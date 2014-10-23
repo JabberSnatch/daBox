@@ -6,7 +6,8 @@ void initBlast(BlastLogic& blast, SDL_Texture* sprite, double x, double y) {
     blast.alive = true;
     blast.currentFrame = 0;
 
-    blast.outRect.h = blast.outRect.w = blast.inRect.h = blast.inRect.w = 16;
+    blast.outRect.h = blast.outRect.w = 16;
+    blast.inRect.h = blast.inRect.w = 16;
     blast.outRect.x = (int) floor(x + 0.5f);
     blast.outRect.y = (int) floor(y + 0.5f);
 

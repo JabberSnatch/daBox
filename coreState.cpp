@@ -1,9 +1,13 @@
 #include "stateFunctions.h"
 #include "GlobalConstants.h"
-#include "gameVariables.h"
+#include "GameVariables.h"
+
+#include <iostream>
 
 int coreState(Game& game) {
     int nextState = CORE_STATE;
+
+    game.updated = false;
 
 /// HANDLE INPUTS
     if (game.e.type == SDL_QUIT) {
@@ -82,7 +86,7 @@ int coreState(Game& game) {
         game.daBox.lastShootDate = SDL_GetTicks();
     }
 
-    if (game.lastSpawnDate + SPAWNING_DELAY < SDL_GetTicks()) {
+    if (game.lastSpawnDate + SPAWNING_DELAY < SDL_GetTicks() && game.daEnemies.size() < ENEMIES_CAP) {
         spawnPack(game.enemySprite, game.daEnemies);
         game.lastSpawnDate = SDL_GetTicks();
     }
@@ -127,7 +131,7 @@ int coreState(Game& game) {
 
             if (game.daEnemies[i].alive) {
                 updateEnemy(game.daEnemies[i], game.daBox);
-                for (unsigned int j = i+1; j < game.daEnemies.size(); j++) {
+                for (unsigned int j = 0; j < game.daEnemies.size(); j++) {
                     if (i != j) {
                         collide(game.daEnemies[i], game.daEnemies[j]);
                     }
@@ -140,13 +144,14 @@ int coreState(Game& game) {
             }
         }
 
-
         // ..Aaaaand update the lag counter
         game.lag -= SCREEN_TPF;
+        game.updated = true;
     }
 
     if (!game.daBox.alive) {
         //Switch to gameover state
+        game.daBox.sprite = game.enemySprite;
     }
 
 /// RENDER
@@ -163,6 +168,11 @@ int coreState(Game& game) {
     renderBox(game.renderer, game.daBox);
 
     SDL_UpdateWindowSurface(game.window);
+    if (game.updated){
+        std::cout << game.daEnemies.size() << " : " << 1000/(SDL_GetTicks() - game.lastRender) << std::endl;
+        game.lastRender = SDL_GetTicks();
+    }
+
 
     return nextState;
 }
