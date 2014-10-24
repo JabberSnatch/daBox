@@ -7,7 +7,9 @@ const unsigned int SCREEN_HEIGHT = 480;
 const unsigned int SCREEN_FPS = 59;
 const unsigned int SCREEN_TPF = 1000 / SCREEN_FPS; // TPF = Ticks Per Frame
 
-const double ENEMY_MAX_SPEED = 1.7f;
+const double ENEMY_MAX_SPEED = 2.0f;
+const double SHIFTING_DISTANCE = ENEMY_MAX_SPEED / 2;
+
 const double MAX_SPEED = 3.7f;
 const double ACC_FACTOR = 0.7f;
 const double FRICTION = 0.15f;

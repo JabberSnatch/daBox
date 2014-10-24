@@ -14,7 +14,7 @@ struct EnemyLogic {
 
     double xPosition, yPosition;
     double xVelocity, yVelocity;
-    double maxVelocity;
+    double speed;
 
     SDL_Rect outRect;
     SDL_Rect inRect;

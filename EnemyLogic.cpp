@@ -25,7 +25,7 @@ void initEnemy (EnemyLogic& enemy, SDL_Texture* sprite, double x, double y) {
     enemy.hitBox.x = enemy.outRect.x+1;
     enemy.hitBox.y = enemy.outRect.y+1;
 
-    enemy.maxVelocity = ENEMY_MAX_SPEED;
+    enemy.speed = ENEMY_MAX_SPEED;
 }
 
 void updateEnemy(EnemyLogic& enemy, BoxLogic& target) {
@@ -33,7 +33,7 @@ void updateEnemy(EnemyLogic& enemy, BoxLogic& target) {
     double a = target.xPosition - enemy.xPosition;
     double b = target.yPosition - enemy.yPosition;
     double c = sqrt(pow(a, 2.0f)+pow(b, 2.0f)); // Distance from target
-    double coeff = enemy.maxVelocity / c;
+    double coeff = enemy.speed / c;
 
     enemy.xVelocity = a * coeff;
     enemy.yVelocity = b * coeff;
@@ -76,36 +76,41 @@ EnemyLogic spawnEnemy(SDL_Texture* enemySprite) {
     return newEnemy;
 }
 
+// Packs of enemies are spawned outside the screen.
+// It chooses a random point and spawns enemy near it
 void spawnPack(SDL_Texture* enemySprite, std::vector<EnemyLogic>& enemies) {
-    int side = rand() % 4;
-    int offset = 60;
-    double randX = rand() % SCREEN_WIDTH;
-    double randY = rand() % SCREEN_HEIGHT;
 
+    int offset = 60; // How far away from the side the spawning point will be
+
+    SDL_Point packCenter;
+    packCenter.x = rand() % SCREEN_WIDTH;
+    packCenter.y = rand() % SCREEN_HEIGHT;
+
+    int side = rand() % 4;
     switch (side) {
     case 0: // NORTH
-        randY = -offset;
+        packCenter.y = -offset;
         break;
     case 1: // EAST
-        randX = SCREEN_WIDTH + offset;
+        packCenter.x = SCREEN_WIDTH + offset;
         break;
     case 2: // SOUTH
-        randY = SCREEN_HEIGHT + offset;
+        packCenter.y = SCREEN_HEIGHT + offset;
         break;
     case 3: // WEST
-        randX = -offset;
+        packCenter.x = -offset;
         break;
     }
 
     int enemiesToSpawn = (rand() % 15) + 5;
     int range = enemiesToSpawn * 2 + 19;
-    EnemyLogic newEnemy;
-
-    //std::cout << enemiesToSpawn << std::endl;
 
     for (int i = 0; i < enemiesToSpawn; i++){
-        initEnemy(newEnemy, enemySprite, randX+rand()%(range*2)-range, randY+rand()%(range*2)-range);
-        //initEnemy(newEnemy, enemySprite, randX, randY);
+        double x = packCenter.x + rand()%(range*2) - range;
+        double y = packCenter.y + rand()%(range*2) - range;
+
+        EnemyLogic newEnemy;
+        initEnemy(newEnemy, enemySprite, x, y);
         enemies.push_back(newEnemy);
     }
 }
@@ -131,17 +136,17 @@ bool collide (EnemyLogic& A, EnemyLogic& B) {
     if (SDL_HasIntersection(&A.hitBox, &B.hitBox)) {
         collide = true;
         if (A.xPosition > B.xPosition) {
-            A.xPosition += ENEMY_MAX_SPEED/2;
+            A.xPosition += SHIFTING_DISTANCE;
         }
         else if (A.xPosition < B.xPosition){
-            A.xPosition -= ENEMY_MAX_SPEED/2;
+            A.xPosition -= SHIFTING_DISTANCE;
         }
 
         if (A.yPosition > B.yPosition) {
-            A.yPosition += ENEMY_MAX_SPEED/2;
+            A.yPosition += SHIFTING_DISTANCE;
         }
         else if (A.yPosition < B.yPosition) {
-            A.yPosition -= ENEMY_MAX_SPEED/2;
+            A.yPosition -= SHIFTING_DISTANCE;
         }
     }
 
@@ -152,8 +157,8 @@ bool collide (EnemyLogic& A, EnemyLogic& B) {
 }
 
 void updateOutRect(EnemyLogic& enemy){
-    enemy.outRect.x = (int) floor(enemy.xPosition + 0.5f);
-    enemy.outRect.y = (int) floor(enemy.yPosition + 0.5f);
+    enemy.outRect.x = (int) enemy.xPosition;
+    enemy.outRect.y = (int) enemy.yPosition;
     enemy.hitBox.x = enemy.outRect.x+1;
     enemy.hitBox.y = enemy.outRect.y+1;
 }
