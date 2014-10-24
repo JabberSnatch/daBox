@@ -21,6 +21,7 @@ struct Game {
     SDL_Texture* missileSprite;
     SDL_Texture* enemySprite;
     SDL_Texture* blastSprite;
+    SDL_Texture* gameoverScreen;
 
 /// Entities
     std::vector<MissileLogic> daMissiles;
@@ -39,6 +40,10 @@ struct Game {
     bool updated;
 
     int state;
+
+    int counter;
 };
+
+void renderAll(Game& game); //TODO implement this function using the render code in CoreState
 
 #endif // GAMEVARIABLES_H_INCLUDED

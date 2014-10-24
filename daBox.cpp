@@ -35,7 +35,7 @@ int main(int argc, char **argv) {
 
     srand(time(NULL));
     Game game;
-    game.state = 0;
+    game.state = CORE_STATE;
 
 /// SDL INIT
 
@@ -58,6 +58,7 @@ int main(int argc, char **argv) {
     game.missileSprite = loadBitmap("assets/missile.bmp", game.renderer);
     game.enemySprite = loadBitmap("assets/evilBox.bmp", game.renderer);
     game.blastSprite = loadBitmap("assets/blast.bmp", game.renderer);
+    game.gameoverScreen = loadBitmap("assets/gameoverScreen.bmp", game.renderer);
 
 /// RESOURCES INIT
 
@@ -82,11 +83,16 @@ int main(int argc, char **argv) {
         //cout << currentTime << "; " << elapsed << "; " << lag << endl;
         SDL_PollEvent(&game.e);
         switch (game.state) {
-        case 0:
+        case CORE_STATE:
             game.state = coreState(game);
             break;
+        case DABOXDEATH_STATE:
+            game.state = daBoxDeath(game);
+            break;
+        case GAMEOVER_STATE:
+            game.state = gameOverState(game);
+            break;
         }
-
     }
 
 /// END OF GAME LOOP

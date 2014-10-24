@@ -1,4 +1,4 @@
-#include "stateFunctions.h"
+#include "StateFunctions.h"
 #include "GlobalConstants.h"
 #include "GameVariables.h"
 
@@ -158,11 +158,6 @@ int coreState(Game& game) {
         game.updated = true;
     }
 
-    if (!game.daBox.alive) {
-        //Switch to gameover state
-        game.daBox.sprite = game.enemySprite;
-    }
-
 /// RENDER
 
     //cout << daBox.xVelocity << "; " << daBox.yVelocity << endl;
@@ -183,6 +178,10 @@ int coreState(Game& game) {
         game.lastRender = ticks;
     }
 
+
+    if (!game.daBox.alive) {
+        nextState = DABOXDEATH_STATE;
+    }
 
     return nextState;
 }

@@ -24,6 +24,7 @@ const double PRECISION = 0.1f;
 const int CORE_STATE = 0;
 const int TITLE_STATE = 1;
 const int GAMEOVER_STATE = 2;
+const int DABOXDEATH_STATE = 3;
 
 const int ENEMIES_CAP = 325;
 

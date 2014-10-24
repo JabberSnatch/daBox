@@ -83,8 +83,10 @@ void spawnPack(SDL_Texture* enemySprite, std::vector<EnemyLogic>& enemies) {
     int offset = 60; // How far away from the side the spawning point will be
 
     SDL_Point packCenter;
-    packCenter.x = rand() % SCREEN_WIDTH;
-    packCenter.y = rand() % SCREEN_HEIGHT;
+    packCenter.x = rand()%SCREEN_WIDTH;
+    packCenter.y = rand()%SCREEN_HEIGHT;
+
+    std::cout << packCenter.x << "; " << packCenter.y << std::endl;
 
     int side = rand() % 4;
     switch (side) {
