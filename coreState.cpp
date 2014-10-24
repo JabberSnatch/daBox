@@ -81,44 +81,53 @@ int coreState(Game& game) {
     }
 
 /// UPDATE
+
+    // FIRING MISSILE
     if (game.daBox.firing && game.daBox.lastShootDate + FIRING_DELAY < SDL_GetTicks()) {
         game.daMissiles.push_back(fireMissile(game.daBox, game.missileSprite));
         game.daBox.lastShootDate = SDL_GetTicks();
     }
 
+    // SPAWNING PACKS OF ENEMIES
     if (game.lastSpawnDate + SPAWNING_DELAY < SDL_GetTicks() && game.daEnemies.size() < ENEMIES_CAP) {
         spawnPack(game.enemySprite, game.daEnemies);
         game.lastSpawnDate = SDL_GetTicks();
     }
 
+    // GAME LOOP
     while(game.lag >= SCREEN_TPF) {
 
+        /// Box update
         updateBox(game.daBox);
 
         /// Blasts update
-        for (unsigned int i = 0; i < game.daBlasts.size(); i++) {
+        for (int i = 0; i < game.daBlasts.size(); i++) {
             if (game.daBlasts[i].alive) {
                 updateBlast(game.daBlasts[i]);
             } else {
                 game.daBlasts.erase(game.daBlasts.begin()+i);
             }
-
         }
 
         /// Missiles update
-        for (unsigned int i = 0; i < game.daMissiles.size(); i++) {
+        int j;
+        BlastLogic blast;
+        for (int i = 0; i < game.daMissiles.size(); i++) {
 
             if (game.daMissiles[i].alive) {
-                updateMissile(game.daMissiles[i]);;
-                unsigned int j = 0;
+
+                updateMissile(game.daMissiles[i]); // Move the missile
+
+                // Look for collisions with the enemies
+                j = 0;
                 while(j < game.daEnemies.size() && game.daMissiles[i].alive) {
                     if (collide(game.daEnemies[j], game.daMissiles[i])) {
-                        BlastLogic blast;
                         initBlast(blast, game.blastSprite, game.daEnemies[j].xPosition, game.daEnemies[j].yPosition);
                         game.daBlasts.push_back(blast);
                     }
                     j++;
                 }
+
             }
 
             else {
@@ -127,11 +136,11 @@ int coreState(Game& game) {
         }
 
         /// Enemies update
-        for (unsigned int i = 0; i < game.daEnemies.size(); i++) {
+        for (int i = 0; i < game.daEnemies.size(); i++) {
 
             if (game.daEnemies[i].alive) {
                 updateEnemy(game.daEnemies[i], game.daBox);
-                for (unsigned int j = 0; j < game.daEnemies.size(); j++) {
+                for (int j = 0; j < game.daEnemies.size(); j++) {
                     if (i != j) {
                         collide(game.daEnemies[i], game.daEnemies[j]);
                     }
@@ -169,8 +178,9 @@ int coreState(Game& game) {
 
     SDL_UpdateWindowSurface(game.window);
     if (game.updated){
-        std::cout << game.daEnemies.size() << " : " << 1000/(SDL_GetTicks() - game.lastRender) << std::endl;
-        game.lastRender = SDL_GetTicks();
+        int ticks = SDL_GetTicks();
+        std::cout << game.daEnemies.size() << " : " << 1000/(ticks - game.lastRender + 1) << std::endl; //Add 1 to prevent division by 0
+        game.lastRender = ticks;
     }
 
 
