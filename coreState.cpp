@@ -101,7 +101,7 @@ int coreState(Game& game) {
         updateBox(game.daBox);
 
         /// Blasts update
-        for (int i = 0; i < game.daBlasts.size(); i++) {
+        for (unsigned int i = 0; i < game.daBlasts.size(); i++) {
             if (game.daBlasts[i].alive) {
                 updateBlast(game.daBlasts[i]);
             } else {
@@ -110,9 +110,9 @@ int coreState(Game& game) {
         }
 
         /// Missiles update
-        int j;
+        unsigned int j;
         BlastLogic blast;
-        for (int i = 0; i < game.daMissiles.size(); i++) {
+        for (unsigned int i = 0; i < game.daMissiles.size(); i++) {
 
             if (game.daMissiles[i].alive) {
 
@@ -136,11 +136,11 @@ int coreState(Game& game) {
         }
 
         /// Enemies update
-        for (int i = 0; i < game.daEnemies.size(); i++) {
+        for (unsigned int i = 0; i < game.daEnemies.size(); i++) {
 
             if (game.daEnemies[i].alive) {
                 updateEnemy(game.daEnemies[i], game.daBox);
-                for (int j = 0; j < game.daEnemies.size(); j++) {
+                for (unsigned int j = 0; j < game.daEnemies.size(); j++) {
                     if (i != j) {
                         collide(game.daEnemies[i], game.daEnemies[j]);
                     }
@@ -161,17 +161,8 @@ int coreState(Game& game) {
 /// RENDER
 
     //cout << daBox.xVelocity << "; " << daBox.yVelocity << endl;
-    SDL_RenderClear(game.renderer);
+    renderAll(game);
 
-    for (unsigned int i = 0; i < game.daMissiles.size(); i++)
-        renderMissile(game.renderer, game.daMissiles[i]);
-    for (unsigned int i = 0; i < game.daEnemies.size(); i++)
-        renderEnemy(game.renderer, game.daEnemies[i]);
-    for (unsigned int i = 0; i < game.daBlasts.size(); i++)
-        renderBlast(game.renderer, game.daBlasts[i]);
-    renderBox(game.renderer, game.daBox);
-
-    SDL_UpdateWindowSurface(game.window);
     if (game.updated){
         int ticks = SDL_GetTicks();
         std::cout << game.daEnemies.size() << " : " << 1000/(ticks - game.lastRender + 1) << std::endl; //Add 1 to prevent division by 0
@@ -180,6 +171,8 @@ int coreState(Game& game) {
 
 
     if (!game.daBox.alive) {
+        game.lives.erase(game.lives.end()-1);
+        game.daBox.alive = true;
         nextState = DABOXDEATH_STATE;
     }
 

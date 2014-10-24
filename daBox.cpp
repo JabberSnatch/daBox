@@ -17,6 +17,7 @@
 using namespace std;
 
 // TODO (Samu#1#): Add other stuff
+// TODO (Samu#2#): Add a nuke. It should be reloading over time
 
 SDL_Texture* loadBitmap(string path, SDL_Renderer* renderer) {
     SDL_Surface * tmp = SDL_LoadBMP(path.c_str());
@@ -58,21 +59,14 @@ int main(int argc, char **argv) {
     game.missileSprite = loadBitmap("assets/missile.bmp", game.renderer);
     game.enemySprite = loadBitmap("assets/evilBox.bmp", game.renderer);
     game.blastSprite = loadBitmap("assets/blast.bmp", game.renderer);
+    game.heartSprite = loadBitmap("assets/heart.bmp", game.renderer);
     game.gameoverScreen = loadBitmap("assets/gameoverScreen.bmp", game.renderer);
 
-/// RESOURCES INIT
-
-    initBox(game.daBox, game.boxSprite);
-
-    game.lastSpawnDate = 0;
-
-    game.running = true;
-    // FPS capping variables
-    game.lastTime = SDL_GetTicks();
-    game.lag = 0;
+/// GAME INIT
+    resetGame(game);
 
 /// GAME LOOP
-
+    game.running = true;
     while (game.running) {
 
         game.currentTime = SDL_GetTicks();

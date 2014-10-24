@@ -26,6 +26,8 @@ const int TITLE_STATE = 1;
 const int GAMEOVER_STATE = 2;
 const int DABOXDEATH_STATE = 3;
 
-const int ENEMIES_CAP = 325;
+const unsigned int ENEMIES_CAP = 325;
+
+const int STARTING_LIVES = 3;
 
 #endif // GLOBALCONSTANTS_H_INCLUDED

@@ -21,12 +21,14 @@ struct Game {
     SDL_Texture* missileSprite;
     SDL_Texture* enemySprite;
     SDL_Texture* blastSprite;
+    SDL_Texture* heartSprite;
     SDL_Texture* gameoverScreen;
 
 /// Entities
     std::vector<MissileLogic> daMissiles;
     std::vector<EnemyLogic> daEnemies;
     std::vector<BlastLogic> daBlasts;
+    std::vector<BlastLogic> lives;
     BoxLogic daBox;
 
     unsigned int lastSpawnDate;
@@ -40,10 +42,9 @@ struct Game {
     bool updated;
 
     int state;
-
-    int counter;
 };
 
+void resetGame(Game& game);
 void renderAll(Game& game); //TODO implement this function using the render code in CoreState
 
 #endif // GAMEVARIABLES_H_INCLUDED

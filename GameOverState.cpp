@@ -5,7 +5,7 @@
 #include <iostream>
 
 int daBoxDeath(Game& game) {
-    int nextState = GAMEOVER_STATE;
+    int nextState = CORE_STATE;
 
 /// UPDATE
     game.daBox.outRect.x--;
@@ -17,42 +17,46 @@ int daBoxDeath(Game& game) {
             game.daBox.outRect.x -= 3;
         }
 
-        SDL_RenderClear(game.renderer);
-
-        for (unsigned int i = 0; i < game.daMissiles.size(); i++)
-            renderMissile(game.renderer, game.daMissiles[i]);
-        for (unsigned int i = 0; i < game.daEnemies.size(); i++)
-            renderEnemy(game.renderer, game.daEnemies[i]);
-        for (unsigned int i = 0; i < game.daBlasts.size(); i++)
-            renderBlast(game.renderer, game.daBlasts[i]);
-        renderBox(game.renderer, game.daBox);
-
-        SDL_UpdateWindowSurface(game.window);
+        renderAll(game);
 
         SDL_Delay(40);
     }
 
+    game.daBox.alive = false;
     BlastLogic blast;
     initBlast(blast, game.blastSprite, game.daBox.xPosition, game.daBox.yPosition);
 
     for (int i = 0; i < 50; i++) {
         SDL_RenderClear(game.renderer);
 
-        for (unsigned int i = 0; i < game.daMissiles.size(); i++)
-            renderMissile(game.renderer, game.daMissiles[i]);
-        for (unsigned int i = 0; i < game.daEnemies.size(); i++)
-            renderEnemy(game.renderer, game.daEnemies[i]);
-        for (unsigned int i = 0; i < game.daBlasts.size(); i++)
-            renderBlast(game.renderer, game.daBlasts[i]);
+        renderAll(game);
 
         if (blast.alive) {
             renderBlast(game.renderer, blast);
             updateBlast(blast);
         }
 
+        for (unsigned int i = 0; i < game.lives.size(); i++)
+            renderBlast(game.renderer, game.lives[i]);
+
         SDL_UpdateWindowSurface(game.window);
 
         SDL_Delay(40);
+    }
+
+    if (game.lives.size() <= 0) {
+        nextState = GAMEOVER_STATE;
+    }
+    else {
+        game.daBox.alive = true;
+
+        game.daEnemies.clear();
+        game.daMissiles.clear();
+        game.daBlasts.clear();
+
+        game.lastSpawnDate = 0;
+        game.lastTime = SDL_GetTicks();
+        game.lag = 0;
     }
 
     return nextState;
@@ -80,12 +84,7 @@ int gameOverState(Game& game) {
 
     // Handle the area cleanup
     if (nextState == CORE_STATE) {
-        initBox(game.daBox, game.boxSprite);
-        game.daEnemies.clear();
-        game.daMissiles.clear();
-        game.daBlasts.clear();
-        game.lag = 0;
-        game.lastTime = SDL_GetTicks();
+        resetGame(game);
     }
 
     return nextState;
