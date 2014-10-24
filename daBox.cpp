@@ -35,7 +35,7 @@ int main(int argc, char **argv) {
 
     srand(time(NULL));
     Game game;
-    int gameState = 0;
+    game.state = 0;
 
 /// SDL INIT
 
@@ -81,9 +81,9 @@ int main(int argc, char **argv) {
 
         //cout << currentTime << "; " << elapsed << "; " << lag << endl;
         SDL_PollEvent(&game.e);
-        switch (gameState) {
+        switch (game.state) {
         case 0:
-            gameState = coreState(game);
+            game.state = coreState(game);
             break;
         }
 

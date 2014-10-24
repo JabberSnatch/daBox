@@ -30,12 +30,15 @@ struct Game {
 
     unsigned int lastSpawnDate;
 
+/// Core
     bool running;
     SDL_Event e;
     unsigned int lastTime, currentTime, lag, elapsed; // FPS capping variables
 
     unsigned int lastRender; // FPS displaying variables
     bool updated;
+
+    int state;
 };
 
 #endif // GAMEVARIABLES_H_INCLUDED
