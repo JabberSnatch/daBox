@@ -86,6 +86,9 @@ int main(int argc, char **argv) {
         case GAMEOVER_STATE:
             game.state = gameOverState(game);
             break;
+        case PAUSE_STATE:
+            game.state = pauseState(game);
+            break;
         }
     }
 

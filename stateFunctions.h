@@ -9,6 +9,7 @@ struct Game;
 int titleState(Game& game); // Title screen
 
 /// CoreState.cpp
+int pauseState(Game& game);
 int coreState(Game& game); // Main state of the game, where the fighting occurs
 
 /// GameOverState.cpp

@@ -4,6 +4,28 @@
 
 #include <iostream>
 
+int pauseState(Game& game) {
+    int nextState = PAUSE_STATE;
+
+    if (game.e.type == SDL_QUIT) {
+        game.running = false;
+    }
+    if (game.e.type == SDL_KEYDOWN) {
+        switch(game.e.key.keysym.sym) {
+        case SDLK_ESCAPE:
+            game.running = false;
+            break;
+        case SDLK_p:
+            nextState = CORE_STATE;
+            game.lastTime = SDL_GetTicks();
+            game.lag = 0;
+            break;
+        }
+    }
+
+    return nextState;
+}
+
 int coreState(Game& game) {
     int nextState = CORE_STATE;
 
@@ -52,6 +74,10 @@ int coreState(Game& game) {
 
         case SDLK_ESCAPE:
             game.running = false;
+            break;
+
+        case SDLK_p:
+            nextState = PAUSE_STATE;
             break;
         }
     }

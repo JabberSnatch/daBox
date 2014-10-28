@@ -7,10 +7,10 @@ const unsigned int SCREEN_HEIGHT = 480;
 const unsigned int SCREEN_FPS = 59;
 const unsigned int SCREEN_TPF = 1000 / SCREEN_FPS; // TPF = Ticks Per Frame
 
-const double ENEMY_MAX_SPEED = 2.0f;
+const double ENEMY_MAX_SPEED = 1.3f;
 const double SHIFTING_DISTANCE = ENEMY_MAX_SPEED / 2;
 
-const double MAX_SPEED = 3.7f;
+const double MAX_SPEED = 2.5f;
 const double ACC_FACTOR = 0.7f;
 const double FRICTION = 0.15f;
 
@@ -25,6 +25,7 @@ const int CORE_STATE = 0;
 const int TITLE_STATE = 1;
 const int GAMEOVER_STATE = 2;
 const int DABOXDEATH_STATE = 3;
+const int PAUSE_STATE = 4;
 
 const unsigned int ENEMIES_CAP = 325;
 
