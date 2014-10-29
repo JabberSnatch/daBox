@@ -8,6 +8,8 @@
 #include "BlastLogic.h"
 #include "BoxLogic.h"
 
+#include "EnemiesQuadTree.h"
+
 #include <vector>
 
 struct Game {
@@ -30,6 +32,8 @@ struct Game {
     std::vector<BlastLogic> daBlasts;
     std::vector<BlastLogic> lives;
     BoxLogic daBox;
+
+    EnemiesQuadTree collisionMap;
 
     unsigned int lastSpawnDate;
 

@@ -12,6 +12,7 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
+					<Add option="-std=c++11" />
 					<Add option="-Wall" />
 					<Add option="-g" />
 				</Compiler>
@@ -23,6 +24,7 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
+					<Add option="-std=c++11" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -37,6 +39,8 @@
 		<Unit filename="BoxLogic.cpp" />
 		<Unit filename="BoxLogic.h" />
 		<Unit filename="CoreState.cpp" />
+		<Unit filename="EnemiesQuadTree.cpp" />
+		<Unit filename="EnemiesQuadTree.h" />
 		<Unit filename="EnemyLogic.cpp" />
 		<Unit filename="EnemyLogic.h" />
 		<Unit filename="GameOverState.cpp" />

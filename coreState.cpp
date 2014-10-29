@@ -1,6 +1,7 @@
 #include "StateFunctions.h"
 #include "GlobalConstants.h"
 #include "GameVariables.h"
+#include "EnemiesQuadTree.h"
 
 #include <iostream>
 
@@ -94,7 +95,6 @@ int coreState(Game& game) {
         game.lastSpawnDate = SDL_GetTicks();
     }
 
-    // GAME LOOP
     while(game.lag >= SCREEN_TPF) {
 
         /// Box update
@@ -136,22 +136,20 @@ int coreState(Game& game) {
         }
 
         /// Enemies update
+        game.collisionMap.clear();
         for (unsigned int i = 0; i < game.daEnemies.size(); i++) {
 
             if (game.daEnemies[i].alive) {
                 updateEnemy(game.daEnemies[i], game.daBox);
-                for (unsigned int j = 0; j < game.daEnemies.size(); j++) {
-                    if (i != j) {
-                        collide(game.daEnemies[i], game.daEnemies[j]);
-                    }
-                }
                 collide(game.daBox, game.daEnemies[i]);
+                game.collisionMap.insert(game.daEnemies[i]);
             }
 
             else {
                 game.daEnemies.erase(game.daEnemies.begin()+i);
             }
         }
+        game.collisionMap.handleCollisions();
 
         // ..Aaaaand update the lag counter
         game.lag -= SCREEN_TPF;
