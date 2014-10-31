@@ -68,6 +68,7 @@ int gameOverState(Game& game) {
     SDL_RenderCopy(game.renderer, game.gameoverScreen, NULL, NULL);
     SDL_UpdateWindowSurface(game.window);
 
+    SDL_PollEvent(&game.e);
     if (game.e.type == SDL_QUIT) {
         game.running = false;
     }

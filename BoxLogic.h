@@ -5,6 +5,8 @@
 
 #include "MissileLogic.h"
 
+#include <list>
+
 struct EnemyLogic;
 
 struct BoxLogic {
@@ -17,6 +19,7 @@ struct BoxLogic {
 
     unsigned int lastShootDate;
     bool firing;
+    std::list<int> firingDirections;
 
     double xPosition, yPosition;
     double xVelocity, yVelocity;

@@ -10,6 +10,7 @@ int coreState(Game& game) {
     game.updated = false;
 
 /// HANDLE INPUTS
+    SDL_PollEvent(&game.e);
     if (game.e.type == SDL_QUIT) {
         game.running = false;
     }
@@ -32,21 +33,25 @@ int coreState(Game& game) {
         case SDLK_UP:
             //cout << "UPd; ";
             game.daBox.orientation = 0;
+            game.daBox.firingDirections.push_back(0);
+            game.daBox.firing = true;
             break;
         case SDLK_RIGHT:
             //cout << "RIGHTd; ";
             game.daBox.orientation = 1;
+            game.daBox.firingDirections.push_back(1);
+            game.daBox.firing = true;
             break;
         case SDLK_DOWN:
             //cout << "DOWNd; ";
             game.daBox.orientation = 2;
+            game.daBox.firingDirections.push_back(2);
+            game.daBox.firing = true;
             break;
         case SDLK_LEFT:
             //cout << "LEFTd; ";
             game.daBox.orientation = 3;
-            break;
-
-        case SDLK_SPACE:
+            game.daBox.firingDirections.push_back(3);
             game.daBox.firing = true;
             break;
 
@@ -74,13 +79,29 @@ int coreState(Game& game) {
             game.daBox.directions[3] = 0;
             break;
 
-        case SDLK_SPACE:
-            game.daBox.firing = false;
+        case SDLK_UP:
+            game.daBox.firingDirections.remove(0);
+            break;
+        case SDLK_RIGHT:
+            game.daBox.firingDirections.remove(1);
+            break;
+        case SDLK_DOWN:
+            game.daBox.firingDirections.remove(2);
+            break;
+        case SDLK_LEFT:
+            game.daBox.firingDirections.remove(3);
             break;
         }
     }
 
 /// UPDATE
+
+    if (game.daBox.firingDirections.size() < 1) {
+        game.daBox.firing = false;
+    }
+    else {
+        game.daBox.orientation = game.daBox.firingDirections.back();
+    }
 
     // FIRING MISSILE
     if (game.daBox.firing && game.daBox.lastShootDate + FIRING_DELAY < SDL_GetTicks()) {

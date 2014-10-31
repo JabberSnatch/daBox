@@ -75,7 +75,6 @@ int main(int argc, char **argv) {
         game.lag += game.elapsed;
 
         //cout << currentTime << "; " << elapsed << "; " << lag << endl;
-        SDL_PollEvent(&game.e);
         switch (game.state) {
         case CORE_STATE:
             game.state = coreState(game);
