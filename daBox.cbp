@@ -32,6 +32,9 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Linker>
+			<Add option="-lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf" />
+		</Linker>
 		<Unit filename="BlastLogic.cpp" />
 		<Unit filename="BlastLogic.h" />
 		<Unit filename="BoxLogic.cpp" />
@@ -43,6 +46,8 @@
 		<Unit filename="GameVariables.cpp" />
 		<Unit filename="GameVariables.h" />
 		<Unit filename="GlobalConstants.h" />
+		<Unit filename="ItemLogic.cpp" />
+		<Unit filename="ItemLogic.h" />
 		<Unit filename="MissileLogic.cpp" />
 		<Unit filename="MissileLogic.h" />
 		<Unit filename="StateFunctions.h" />

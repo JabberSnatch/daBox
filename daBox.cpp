@@ -5,6 +5,7 @@
 #include <math.h>
 
 #include "SDL.h"
+#include "SDL_ttf.h"
 #include "GlobalConstants.h"
 #include "GameVariables.h"
 #include "StateFunctions.h"
@@ -39,6 +40,7 @@ int main(int argc, char **argv) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "SDL_Init fail : %s\n", SDL_GetError());
         return 1;
     }
+    TTF_Init();
 
     game.window = SDL_CreateWindow("daBox", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
     if (!game.window) {
@@ -102,6 +104,7 @@ int main(int argc, char **argv) {
     SDL_DestroyWindow(game.window);
     game.window = NULL;
 
+    TTF_Quit();
     SDL_Quit();
 
     return 0;
