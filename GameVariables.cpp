@@ -55,7 +55,7 @@ void renderAll(Game& game) {
 }
 
 void renderScore(Game& game) {
-    std::cout << game.score << "; x" << game.multiplier << std::endl;
+    //std::cout << game.score << "; x" << game.multiplier << std::endl;
 
     TTF_Font* font = TTF_OpenFont("assets/scoreFont.ttf", 32);
     SDL_Color color; color.r = 255; color.b = 255; color.g = 255;
@@ -72,7 +72,8 @@ void renderScore(Game& game) {
     SDL_Texture* textTexture = SDL_CreateTextureFromSurface(game.renderer, textSurface);
 
     SDL_Rect outRect;
-    outRect.w = textSurface->w; outRect.h = textSurface->h;
+    outRect.w = textSurface->w;
+    outRect.h = textSurface->h;
     outRect.y = 5; outRect.x = SCREEN_WIDTH - outRect.w - 7;
 
     SDL_RenderCopy(game.renderer, textTexture, NULL, &outRect);
@@ -99,7 +100,7 @@ void renderScore(Game& game) {
     textSurface = TTF_RenderText_Blended(font, multiplier, color);
     textTexture = SDL_CreateTextureFromSurface(game.renderer, textSurface);
 
-    outRect.y += outRect.h + 5;
+    outRect.y = outRect.y + outRect.h + 5;
     outRect.w = textSurface->w; outRect.h = textSurface->h;
     outRect.x = SCREEN_WIDTH - outRect.w - 7;
 
