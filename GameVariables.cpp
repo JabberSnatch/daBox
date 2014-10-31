@@ -1,8 +1,11 @@
 #include "GameVariables.h"
 #include "GlobalConstants.h"
 
+#include <iostream>
+
 void resetGame(Game& game) {
     initBox(game.daBox, game.boxSprite);
+    initItem(game.bonusItem);
 
     game.daEnemies.clear();
     game.daMissiles.clear();
@@ -16,13 +19,18 @@ void resetGame(Game& game) {
         game.lives.push_back(life);
     }
 
-    game.lastSpawnDate = 0;
+    game.score = 0;
+    game.multiplier = 1.0f;
+    game.lastSpawnDate = SDL_GetTicks();
     game.lastTime = SDL_GetTicks();
     game.lag = 0;
 }
 
 void renderAll(Game& game) {
     SDL_RenderClear(game.renderer);
+
+    if (game.bonusItem.alive)
+        renderItem(game.renderer, game.bonusItem);
 
     for (unsigned int i = 0; i < game.daMissiles.size(); i++)
         renderMissile(game.renderer, game.daMissiles[i]);
@@ -37,7 +45,12 @@ void renderAll(Game& game) {
     for (unsigned int i = 0; i < game.lives.size(); i++)
         renderBlast(game.renderer, game.lives[i]);
 
+    renderScore(game);
+
     SDL_UpdateWindowSurface(game.window);
 }
 
+void renderScore(Game& game) {
+    std::cout << game.score << "; x" << game.multiplier << std::endl;
+}
 

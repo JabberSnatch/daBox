@@ -54,7 +54,7 @@ int daBoxDeath(Game& game) {
         game.daMissiles.clear();
         game.daBlasts.clear();
 
-        game.lastSpawnDate = 0;
+        game.lastSpawnDate = SDL_GetTicks();
         game.lastTime = SDL_GetTicks();
         game.lag = 0;
     }

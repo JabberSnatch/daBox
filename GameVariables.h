@@ -7,6 +7,7 @@
 #include "EnemyLogic.h"
 #include "BlastLogic.h"
 #include "BoxLogic.h"
+#include "ItemLogic.h"
 
 #include <vector>
 
@@ -29,9 +30,13 @@ struct Game {
     std::vector<EnemyLogic> daEnemies;
     std::vector<BlastLogic> daBlasts;
     std::vector<BlastLogic> lives;
+    ItemLogic bonusItem;
     BoxLogic daBox;
 
     unsigned int lastSpawnDate;
+
+    unsigned int score;
+    double multiplier;
 
 /// Core
     bool running;
@@ -46,5 +51,7 @@ struct Game {
 
 void resetGame(Game& game);
 void renderAll(Game& game); //TODO implement this function using the render code in CoreState
+
+void renderScore(Game& game);
 
 #endif // GAMEVARIABLES_H_INCLUDED

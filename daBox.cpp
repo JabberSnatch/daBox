@@ -3,16 +3,11 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
-#include <vector>
 
 #include "SDL.h"
-#include "BoxLogic.h"
-#include "EnemyLogic.h"
-#include "MissileLogic.h"
-#include "BlastLogic.h"
 #include "GlobalConstants.h"
 #include "GameVariables.h"
-#include "stateFunctions.h"
+#include "StateFunctions.h"
 
 using namespace std;
 
@@ -61,6 +56,7 @@ int main(int argc, char **argv) {
     game.blastSprite = loadBitmap("assets/blast.bmp", game.renderer);
     game.heartSprite = loadBitmap("assets/heart.bmp", game.renderer);
     game.gameoverScreen = loadBitmap("assets/gameoverScreen.bmp", game.renderer);
+    loadItemSprite(game.bonusItem, game.renderer);
 
 /// GAME INIT
     resetGame(game);

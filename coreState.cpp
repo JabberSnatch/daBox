@@ -145,6 +145,8 @@ int coreState(Game& game) {
                     if (collide(game.daEnemies[j], game.daMissiles[i])) {
                         initBlast(blast, game.blastSprite, game.daEnemies[j].xPosition, game.daEnemies[j].yPosition);
                         game.daBlasts.push_back(blast);
+
+                        game.score += 100 * game.multiplier;
                     }
                     j++;
                 }
@@ -172,6 +174,11 @@ int coreState(Game& game) {
             else {
                 game.daEnemies.erase(game.daEnemies.begin()+i);
             }
+        }
+
+        if (collide(game.bonusItem, game.daBox)) {
+            game.multiplier += 0.1f;
+            initItem(game.bonusItem);
         }
 
         // ..Aaaaand update the lag counter
