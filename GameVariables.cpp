@@ -57,7 +57,7 @@ void renderAll(Game& game) {
 void renderScore(Game& game) {
     std::cout << game.score << "; x" << game.multiplier << std::endl;
 
-    TTF_Font* font = TTF_OpenFont("Marlboro.ttf", 32);
+    TTF_Font* font = TTF_OpenFont("assets/scoreFont.ttf", 32);
     SDL_Color color; color.r = 255; color.b = 255; color.g = 255;
 
 /// RENDER SCORE
