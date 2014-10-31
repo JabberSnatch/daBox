@@ -8,8 +8,8 @@
 void initItem(ItemLogic& item) {
     item.alive = true;
 
-    int x = rand()%SCREEN_WIDTH - 16;
-    int y = rand()%SCREEN_HEIGHT - 16;
+    int x = rand()%(SCREEN_WIDTH - 16);
+    int y = rand()%(SCREEN_HEIGHT - 16);
     item.outRect.x = x;
     item.outRect.y = y;
     item.outRect.w = item.outRect.h = 16;
