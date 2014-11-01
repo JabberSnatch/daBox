@@ -19,6 +19,7 @@ void initBox (BoxLogic& daBox, SDL_Texture* sprite) {
 
     daBox.lastShootDate = 0;
     daBox.firing = false;
+    daBox.firingDirections.clear();
 
     daBox.xVelocity = daBox.yVelocity = 0;
 

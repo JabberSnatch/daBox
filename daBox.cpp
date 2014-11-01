@@ -51,6 +51,8 @@ int main(int argc, char **argv) {
     game.screen = SDL_GetWindowSurface(game.window);
     game.renderer = SDL_CreateSoftwareRenderer(game.screen);
 
+    game.scoreFont = TTF_OpenFont("assets/scoreFont.ttf", 32);
+
 /// Sprites loading
     game.boxSprite = loadBitmap("assets/daBox.bmp", game.renderer);
     game.missileSprite = loadBitmap("assets/missile.bmp", game.renderer);

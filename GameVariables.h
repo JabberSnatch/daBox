@@ -2,6 +2,7 @@
 #define GAMEVARIABLES_H_INCLUDED
 
 #include "SDL.h"
+#include "SDL_ttf.h"
 
 #include "MissileLogic.h"
 #include "EnemyLogic.h"
@@ -24,6 +25,7 @@ struct Game {
     SDL_Texture* blastSprite;
     SDL_Texture* heartSprite;
     SDL_Texture* gameoverScreen;
+    TTF_Font* scoreFont;
 
 /// Entities
     std::vector<MissileLogic> daMissiles;

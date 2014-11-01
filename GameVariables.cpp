@@ -54,29 +54,37 @@ void renderAll(Game& game) {
     SDL_UpdateWindowSurface(game.window);
 }
 
+// TODO: find a way to get rid of the unexpected segfault in this function
 void renderScore(Game& game) {
     //std::cout << game.score << "; x" << game.multiplier << std::endl;
 
-    TTF_Font* font = TTF_OpenFont("assets/scoreFont.ttf", 32);
     SDL_Color color; color.r = 255; color.b = 255; color.g = 255;
+    SDL_Rect outRect;
+    SDL_Texture* textTexture;
+    SDL_Surface* textSurface;
 
 /// RENDER SCORE
     if (game.score > 999999999999) { // This guard prevents itoa to overflow
-        return;
+        game.score = 0;
     }
     char score [12];
     itoa(game.score, score, 10);
     //std::string score = std::to_string(game.score); // Doesn't work, the problem seems to come from MinGW
 
-    SDL_Surface* textSurface = TTF_RenderText_Blended(font, score, color);
-    SDL_Texture* textTexture = SDL_CreateTextureFromSurface(game.renderer, textSurface);
+    std::cout << (game.scoreFont != NULL) << "; " << score << std::endl;
+    textSurface = TTF_RenderText_Solid(game.scoreFont, score, color);
+    if (textSurface == NULL) {
+        std::cout << TTF_GetError() << std::endl;
+    }
+    else {
+        textTexture = SDL_CreateTextureFromSurface(game.renderer, textSurface);
+        outRect.w = textSurface->w;
+        outRect.h = textSurface->h;
+        outRect.y = 5;
+        outRect.x = SCREEN_WIDTH - outRect.w - 7;
 
-    SDL_Rect outRect;
-    outRect.w = textSurface->w;
-    outRect.h = textSurface->h;
-    outRect.y = 5; outRect.x = SCREEN_WIDTH - outRect.w - 7;
-
-    SDL_RenderCopy(game.renderer, textTexture, NULL, &outRect);
+        SDL_RenderCopy(game.renderer, textTexture, NULL, &outRect);
+    }
 
 /// RENDER MULTIPLIER
     char multiplier [12];
@@ -96,16 +104,22 @@ void renderScore(Game& game) {
     }
     multiplier[0] = 'x';
 
+    std::cout << (game.scoreFont != NULL) << "; " << multiplier << std::endl;
+    textSurface = TTF_RenderText_Solid(game.scoreFont, multiplier, color);
+    if (textSurface == NULL) {
+        std::cout << TTF_GetError() << std::endl;
+    }
+    else {
+        textTexture = SDL_CreateTextureFromSurface(game.renderer, textSurface);
+        outRect.y = outRect.y + outRect.h + 5;
+        outRect.w = textSurface->w;
+        outRect.h = textSurface->h;
+        outRect.x = SCREEN_WIDTH - outRect.w - 7;
 
-    textSurface = TTF_RenderText_Blended(font, multiplier, color);
-    textTexture = SDL_CreateTextureFromSurface(game.renderer, textSurface);
-
-    outRect.y = outRect.y + outRect.h + 5;
-    outRect.w = textSurface->w; outRect.h = textSurface->h;
-    outRect.x = SCREEN_WIDTH - outRect.w - 7;
-
-    SDL_RenderCopy(game.renderer, textTexture, NULL, &outRect);
+        SDL_RenderCopy(game.renderer, textTexture, NULL, &outRect);
+    }
 
     SDL_FreeSurface(textSurface);
+    SDL_DestroyTexture(textTexture);
 }
 

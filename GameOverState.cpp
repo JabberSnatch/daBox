@@ -57,6 +57,8 @@ int daBoxDeath(Game& game) {
         game.lastSpawnDate = SDL_GetTicks();
         game.lastTime = SDL_GetTicks();
         game.lag = 0;
+        game.multiplier = 1.0f;
+        initBox(game.daBox, game.boxSprite);
     }
 
     return nextState;
