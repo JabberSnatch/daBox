@@ -5,7 +5,7 @@
 
 #include <iostream>
 #include <string>
-#include <cstdlib>
+#include <stdio.h>
 
 void resetGame(Game& game) {
     initBox(game.daBox, game.boxSprite);
