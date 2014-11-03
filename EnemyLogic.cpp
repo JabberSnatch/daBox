@@ -105,7 +105,8 @@ void spawnPack(SDL_Texture* enemySprite, std::vector<EnemyLogic>& enemies) {
     }
 
     int enemiesToSpawn = (rand() % 15) + 5;
-    int range = enemiesToSpawn * 2 + 19;
+    enemiesToSpawn = 125;
+    int range = 40;
 
     for (int i = 0; i < enemiesToSpawn; i++){
         double x = packCenter.x + rand()%(range*2) - range;
@@ -154,6 +155,9 @@ bool collide (EnemyLogic& A, EnemyLogic& B) {
 
     updateOutRect(A);
     updateOutRect(B);
+    if (A.outRect.x == B.outRect.x) {
+        A.outRect.x++;
+    }
 
     return collide;
 }

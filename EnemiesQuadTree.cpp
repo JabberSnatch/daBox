@@ -10,29 +10,15 @@ EnemiesQuadTree::EnemiesQuadTree()
     bounds.h = SCREEN_HEIGHT;
     bounds.w = SCREEN_WIDTH;
     isLeaf = true;
+    depth = 0;
     for (int i = 0; i < 4; i++) {
         underQuadrants[i] = NULL;
     }
 }
 
-EnemiesQuadTree::EnemiesQuadTree(std::vector<EnemyLogic>& e)
-{
-    std::vector<EnemyLogic*> enemiesPtrs;
-    for (size_t i = 0; i < e.size(); i++) {
-        if (e[i].xPosition >= 0 && e[i].xPosition < SCREEN_WIDTH && e[i].yPosition >= 0 && e[i].yPosition < SCREEN_HEIGHT)
-            enemiesPtrs.push_back(&e[i]);
-    }
 
-    SDL_Rect newBounds;
-    newBounds.x = newBounds.y = 0;
-    newBounds.h = SCREEN_HEIGHT;
-    newBounds.w = SCREEN_WIDTH;
-
-    EnemiesQuadTree(enemiesPtrs, newBounds);
-}
-
-EnemiesQuadTree::EnemiesQuadTree(std::vector<EnemyLogic*> enemies, const SDL_Rect& bounds)
-    :enemies(enemies), bounds(bounds), isLeaf(true)
+EnemiesQuadTree::EnemiesQuadTree(std::vector<EnemyLogic*> enemies, const SDL_Rect& bounds, int depth)
+    :enemies(enemies), bounds(bounds), isLeaf(true), depth(depth)
 {
     for (int i = 0; i < 4; i++) {
         underQuadrants[i] = NULL;
@@ -44,9 +30,32 @@ EnemiesQuadTree::EnemiesQuadTree(std::vector<EnemyLogic*> enemies, const SDL_Rec
 }
 
 EnemiesQuadTree::~EnemiesQuadTree() {
-    //clear();
+
 }
 
+
+void EnemiesQuadTree::loadEnemies(std::vector<EnemyLogic>& e) {
+    clear();
+
+    for (size_t i = 0; i < e.size(); i++) {
+        if (e[i].xPosition >= 0 && e[i].xPosition < SCREEN_WIDTH && e[i].yPosition >= 0 && e[i].yPosition < SCREEN_HEIGHT)
+            enemies.push_back(&e[i]);
+    }
+
+    SDL_Rect newBounds;
+    newBounds.x = newBounds.y = 0;
+    newBounds.h = SCREEN_HEIGHT;
+    newBounds.w = SCREEN_WIDTH;
+
+    for (int i = 0; i < 4; i++) {
+        underQuadrants[i] = NULL;
+    }
+    isLeaf = true;
+
+    if (enemies.size() > MAX_ENEMIES) {
+        split();
+    }
+}
 
 // Creates the four underlying quadtrees and fills them with the appropriate entities
 // Also empties the enemies list of the current quadrant, since it's not needed anymore
@@ -72,7 +81,7 @@ void EnemiesQuadTree::split() {
     }
 
     for (int i = 0; i < 4; i++) {
-        underQuadrants[i] = new EnemiesQuadTree(newTabs[i], newBounds[i]);
+        underQuadrants[i] = new EnemiesQuadTree(newTabs[i], newBounds[i], depth+1);
     }
 
     isLeaf = false;
@@ -106,19 +115,19 @@ void EnemiesQuadTree::handleCollisions() {
 }
 
 void EnemiesQuadTree::clear() {
-    if (!isLeaf) {
+    if (isLeaf == false) {
         for (int i = 0; i < 4; i++) {
             underQuadrants[i]->clear();
             delete underQuadrants[i];
         }
-        isLeaf = true;
     }
 }
 
 void EnemiesQuadTree::insert(EnemyLogic& e) {
-    std::cout << this->bounds.x << std::endl;
     int quadrant = getQuadrant(e);
-    if (underQuadrants[quadrant] != NULL) {
+    std::cout << quadrant << std::endl;
+    std::cout << &underQuadrants[quadrant] << std::endl;
+    if (underQuadrants[quadrant] != NULL && quadrant >= 0) {
         underQuadrants[quadrant]->insert(e);
     }
     else {

@@ -136,19 +136,21 @@ int coreState(Game& game) {
         }
 
         /// Enemies update
-        game.collisionMap.clear();
+        //game.collisionMap.clear();
         for (unsigned int i = 0; i < game.daEnemies.size(); i++) {
 
             if (game.daEnemies[i].alive) {
                 updateEnemy(game.daEnemies[i], game.daBox);
-                collide(game.daBox, game.daEnemies[i]);
-                game.collisionMap.insert(game.daEnemies[i]);
+                //collide(game.daBox, game.daEnemies[i]);
+                //game.collisionMap.insert(game.daEnemies[i]);
             }
 
             else {
                 game.daEnemies.erase(game.daEnemies.begin()+i);
             }
         }
+        //game.collisionMap = new EnemiesQuadTree(game.daEnemies);
+        game.collisionMap.loadEnemies(game.daEnemies);
         game.collisionMap.handleCollisions();
 
         // ..Aaaaand update the lag counter
