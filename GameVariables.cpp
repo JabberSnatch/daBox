@@ -68,7 +68,8 @@ void renderScore(Game& game) {
         game.score = 0;
     }
     char score [12];
-    itoa(game.score, score, 10);
+    //itoa(game.score, score, 10);
+    sprintf(score, "%d", game.score);
     //std::string score = std::to_string(game.score); // Doesn't work, the problem seems to come from MinGW
 
     std::cout << (game.scoreFont != NULL) << "; " << score << std::endl;
@@ -91,7 +92,8 @@ void renderScore(Game& game) {
 
     // Formatting game.multiplier to a char*
     int iMul = game.multiplier * 10;
-    itoa(iMul, multiplier, 10);
+    //itoa(iMul, multiplier, 10);
+    sprintf(multiplier, "%d", iMul);
     int i = 0;
     while (multiplier[i] != '\0') {
         i++;
